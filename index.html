@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUTOPILOT.EXE | Mobile Tactical Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #f39c12; 
+            --primary-glow: rgba(243, 156, 18, 0.6);
+            --bg-dark: #050505;
+            --panel-bg: rgba(10, 10, 10, 0.85);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --success: #2ecc71;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: var(--bg-dark);
+            background-image: url('fon.png'); /* Фоновое изображение командного центра */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Ограничитель ширины для мобильного вида */
+        .mobile-wrapper {
+            width: 100%;
+            max-width: 480px; /* Узкий формат */
+            min-height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            padding-bottom: 40px;
+        }
+
+        header {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.9);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo { font-family: 'Orbitron'; font-weight: 900; color: var(--primary); font-size: 1rem; }
+        .status { font-size: 0.65rem; color: var(--success); border: 1px solid var(--success); padding: 3px 8px; border-radius: 15px; text-transform: uppercase; }
+
+        .hero { padding: 30px 15px; text-align: center; }
+        .hero h1 { font-family: 'Orbitron'; font-size: 1.8rem; margin-bottom: 10px; text-transform: uppercase; }
+        .hero h1 span { color: var(--primary); text-shadow: 0 0 15px var(--primary-glow); }
+
+        /* 3D ПОВОРОТ СКРИНШОТА */
+        .app-container {
+            perspective: 1000px;
+            margin: 30px auto;
+            width: 260px;
+        }
+
+        .app-3d-card {
+            width: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .app-container:hover .app-3d-card {
+            transform: rotateY(15deg) rotateX(5deg);
+        }
+
+        .app-3d-card img {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0,0,0,1), 0 0 15px var(--primary-glow);
+            border: 2px solid #333;
+            display: block;
+        }
+
+        /* КНОПКА */
+        .btn-glow {
+            display: block;
+            margin: 20px 15px;
+            padding: 18px;
+            background: var(--primary);
+            color: #000;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 900;
+            font-family: 'Orbitron';
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -150%; width: 200%; height: 200%;
+            background: rgba(255,255,255,0.4);
+            transform: rotate(45deg);
+            animation: slide 3s infinite;
+        }
+
+        @keyframes slide {
+            0% { left: -150%; }
+            20% { left: 150%; }
+            100% { left: 150%; }
+        }
+
+        /* ПРЕИМУЩЕСТВА (2 КОЛОНКИ) */
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 0 15px;
+        }
+
+        .card {
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .card i { color: var(--primary); font-size: 1.4rem; margin-bottom: 8px; display: block; }
+        .card h3 { font-family: 'Orbitron'; font-size: 0.75rem; margin-bottom: 5px; color: #fff; }
+        .card p { font-size: 0.65rem; color: #999; line-height: 1.3; }
+
+        footer { text-align: center; margin-top: 40px; color: #444; font-size: 0.6rem; font-family: 'Orbitron'; }
+    </style>
+</head>
+<body>
+
+<div class="mobile-wrapper">
+    <header>
+        <div class="logo">AUTOPILOT.EXE</div>
+        <div class="status">UNDETECTED</div>
+    </header>
+
+    <section class="hero">
+        <h1>LEVEL UP WHILE <br><span>YOU SLEEP</span></h1>
+        
+        <div class="app-container">
+            <div class="app-3d-card">
+                <img src="app.png" alt="Autopilot App">
+            </div>
+        </div>
+
+        <a href="#" class="btn-glow">ПОДКЛЮЧИТЬ БОТА</a>
+    </section>
+
+    <div class="features-grid">
+        <div class="card">
+            <i class="fas fa-crosshairs"></i>
+            <h3>Macro Sniper</h3>
+            <p>Идеальный фаст-зум и сброс анимации.</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-ghost"></i>
+            <h3>Anti-AFK</h3>
+            <p>Защита от исключения из матча.</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-fingerprint"></i>
+            <h3>Humanizer</h3>
+            <p>Рандомные задержки нажатий.</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-shield-halved"></i>
+            <h3>Security</h3>
+            <p>Внешний запуск без внедрения.</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-microchip"></i>
+            <h3>External</h3>
+            <p>Невидим для Ricochet.</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-bolt"></i>
+            <h3>Instant</h3>
+            <p>Настройка за 1 минуту.</p>
+        </div>
+    </div>
+
+    <footer>
+        © 2026 AUTOPILOT SYSTEMS | V.1.0 BY CASPER
+    </footer>
+</div>
+
+</body>
+</html>
