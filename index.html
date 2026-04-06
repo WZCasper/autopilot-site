@@ -54,6 +54,32 @@
             color: var(--text-main);
         }
 
+        /* ПУЛЬСАЦИЯ СТАТУСА */
+        .status-active {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-green);
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-green);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
         /* ГЛАВНЫЙ ЭКРАН */
         .hero {
             display: flex;
@@ -105,15 +131,30 @@
             text-decoration: none;
             font-size: 14px;
             border: none;
+            display: inline-block;
         }
 
         .btn-red { background: var(--accent-red); color: white; }
         .btn-blue { background: var(--accent-blue); color: white; }
+        
+        /* КНОПКА ПОКУПКИ С НЕОНОМ */
+        .btn-buy {
+            background: var(--accent-green);
+            color: #000 !important;
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.4);
+            letter-spacing: 2px;
+            font-size: 16px;
+        }
 
         .btn:hover {
             transform: translateY(-5px) scale(1.05);
             box-shadow: 0 10px 25px rgba(0,0,0,0.4);
             filter: brightness(1.2);
+        }
+        
+        .btn-buy:hover {
+            background: #27ae60;
+            box-shadow: 0 0 25px rgba(46, 204, 113, 0.6);
         }
 
         /* СЕТКА ДОСТОИНСТВ (6 карточек) */
@@ -159,9 +200,31 @@
             transform: translateZ(50px);
         }
 
+        /* СЕКЦИЯ ПОКУПКИ */
+        .buy-section {
+            padding: 100px 10%;
+            text-align: center;
+            background: linear-gradient(to bottom, transparent, rgba(46, 204, 113, 0.05));
+        }
+
+        .price-card {
+            display: inline-block;
+            padding: 50px 60px;
+            background: var(--card-bg);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+            transition: border-color 0.3s ease;
+        }
+        
+        .price-card:hover {
+            border-color: var(--accent-green);
+        }
+
         @media (max-width: 768px) {
             .hero h1 { font-size: 35px; }
             .app-img { width: 250px; }
+            .price-card { padding: 40px 20px; }
         }
     </style>
 </head>
@@ -169,7 +232,10 @@
 
 <header>
     <div class="logo-text">AUTOPILOT V.1.0</div>
-    <div style="color: var(--accent-green); font-size: 12px; font-weight: bold;">ANTI-RICOCHET ACTIVE</div>
+    <div class="status-active">
+        <div class="status-dot"></div>
+        ANTI-RICOCHET ACTIVE
+    </div>
 </header>
 
 <section class="hero">
@@ -177,12 +243,12 @@
     <p style="color: var(--text-muted); max-width: 700px;">Профессиональное решение для автоматизации и гуманизации игрового процесса с многоуровневой защитой.</p>
     
     <div class="app-preview-container">
-        <img src="app_interface.png" alt="Autopilot Interface" class="app-img">
+        <img src="image_213c0c.png" alt="Autopilot Interface" class="app-img">
     </div>
 
     <div class="btn-group">
-        <a href="#" class="btn btn-red sound-btn">Инструкция</a>
-        <a href="#" class="btn btn-blue sound-btn">Вопросы?</a>
+        <a href="https://www.youtube.com/@WZ.Casper" target="_blank" class="btn btn-red sound-btn">Инструкция</a>
+        <a href="https://t.me/WZ_Casper" target="_blank" class="btn btn-blue sound-btn">Вопросы?</a>
     </div>
 </section>
 
@@ -224,11 +290,33 @@
     </div>
 </section>
 
+<section class="buy-section">
+    <div class="price-card">
+        <h2 style="font-size: 32px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px;">
+            ПОЛУЧИТЬ ДОСТУП
+        </h2>
+        <p style="color: var(--text-muted); margin-bottom: 35px; font-size: 14px;">
+            Активация Neural Core v1.0 происходит через официального менеджера.
+        </p>
+        
+        <div class="btn-group" style="justify-content: center; margin-top: 0;">
+            <a href="https://t.me/SKIPPYManager" target="_blank" class="btn btn-buy sound-btn">
+                ПРИОБРЕСТИ
+            </a>
+        </div>
+        
+        <p style="color: #444; font-size: 11px; margin-top: 25px; text-transform: uppercase;">
+            Мгновенная выдача ключа после оплаты
+        </p>
+    </div>
+</section>
+
 <script>
     // --- АУДИО СИСТЕМА ---
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     function playSound(freq, type, dur, vol) {
+        if(audioCtx.state === 'suspended') return; // Защита от ошибок до первого клика
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = type;
