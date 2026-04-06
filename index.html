@@ -3,210 +3,357 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AUTOPILOT.EXE | Mobile Tactical Center</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>NEURAL CORE V1.0 | Autopilot System</title>
     <style>
+        /* БАЗОВЫЕ НАСТРОЙКИ И ЦВЕТА ИЗ ПРОГРАММЫ */
         :root {
-            --primary: #f39c12; 
-            --primary-glow: rgba(243, 156, 18, 0.6);
-            --bg-dark: #050505;
-            --panel-bg: rgba(10, 10, 10, 0.85);
-            --border-color: rgba(255, 255, 255, 0.1);
-            --success: #2ecc71;
+            --bg-color: #0F0F0F;
+            --card-bg: #1A1A1A;
+            --accent-green: #2ecc71;
+            --accent-red: #e74c3c;
+            --text-main: #FFFFFF;
+            --text-muted: #AAAAAA;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            background-color: var(--bg-dark);
-            background-image: url('fon.png'); /* ФОН САЙТА */
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #fff;
-            font-family: 'Inter', sans-serif;
-            line-height: 1.4;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            background-image: 
+                linear-gradient(rgba(26, 26, 26, 0.5) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(26, 26, 26, 0.5) 1px, transparent 1px);
+            background-size: 40px 40px;
         }
 
-        /* МОБИЛЬНЫЙ ФОРМАТ (УЗКИЙ) */
-        .mobile-wrapper {
-            width: 100%;
-            max-width: 480px;
-            min-height: 100vh;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            border-left: 1px solid var(--border-color);
-            border-right: 1px solid var(--border-color);
-            padding-bottom: 40px;
+        /* АНИМИРОВАННЫЙ ФОНОВОЕ СВЕЧЕНИЕ */
+        .glow-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(46, 204, 113, 0.08) 0%, rgba(15, 15, 15, 0) 70%);
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            animation: pulseBg 8s infinite alternate;
+            pointer-events: none;
         }
 
+        @keyframes pulseBg {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            100% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; }
+        }
+
+        /* НАВИГАЦИЯ */
         header {
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.9);
-            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 20px 50px;
+            background: rgba(15, 15, 15, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #333;
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
-        .logo { font-family: 'Orbitron'; font-weight: 900; color: var(--primary); font-size: 1rem; }
-        .status { font-size: 0.65rem; color: var(--success); border: 1px solid var(--success); padding: 3px 8px; border-radius: 15px; text-transform: uppercase; }
-
-        .hero { padding: 30px 15px; text-align: center; }
-        .hero h1 { font-family: 'Orbitron'; font-size: 1.8rem; margin-bottom: 10px; text-transform: uppercase; }
-        .hero h1 span { color: var(--primary); text-shadow: 0 0 15px var(--primary-glow); }
-
-        /* 3D КОНТЕЙНЕР ДЛЯ APP.PNG */
-        .app-container {
-            perspective: 1000px;
-            margin: 30px auto;
-            width: 260px;
-        }
-
-        .app-3d-card {
-            width: 100%;
-            transform-style: preserve-3d;
-            will-change: transform; /* Оптимизация для плавности */
-            transition: transform 0.1s linear;
-        }
-
-        .app-3d-card img {
-            width: 100%;
-            border-radius: 15px;
-            box-shadow: 0 0 30px rgba(0,0,0,1), 0 0 15px var(--primary-glow);
-            border: 2px solid #333;
-            display: block;
-        }
-
-        /* КНОПКА С АНИМАЦИЕЙ */
-        .btn-glow {
-            display: block;
-            margin: 20px 15px;
-            padding: 18px;
-            background: var(--primary);
-            color: #000;
-            text-decoration: none;
-            text-align: center;
+        .logo {
+            font-size: 24px;
             font-weight: 900;
-            font-family: 'Orbitron';
+            letter-spacing: 2px;
+            color: var(--accent-green);
+            text-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+        }
+
+        .version {
+            font-size: 12px;
+            color: var(--text-muted);
+            border: 1px solid var(--text-muted);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        /* ГЛАВНЫЙ БЛОК */
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            perspective: 1000px;
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 8vw, 80px);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            animation: floatText 4s ease-in-out infinite;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: clamp(16px, 2vw, 20px);
+            max-width: 600px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        @keyframes floatText {
+            0%, 100% { transform: translateY(0); text-shadow: 0 0 20px rgba(46, 204, 113, 0.3); }
+            50% { transform: translateY(-10px); text-shadow: 0 0 40px rgba(46, 204, 113, 0.6); }
+        }
+
+        /* КНОПКИ */
+        .btn-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid #333;
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
-        .btn-glow::after {
+        .btn::before {
             content: '';
             position: absolute;
-            top: -50%; left: -150%; width: 200%; height: 200%;
-            background: rgba(255,255,255,0.4);
-            transform: rotate(45deg);
-            animation: slide 3s infinite;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: all 0.5s ease;
         }
 
-        @keyframes slide {
-            0% { left: -150%; }
-            20% { left: 150%; }
-            100% { left: 150%; }
+        .btn:hover::before {
+            left: 100%;
         }
 
-        /* ДОСТОИНСТВА В ДВЕ КОЛОНКИ */
-        .features-grid {
+        .btn-primary {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-green);
+            color: #000;
+            box-shadow: 0 0 30px rgba(46, 204, 113, 0.6);
+            transform: translateY(-3px);
+        }
+
+        /* 3D КАРТОЧКИ ПРЕИМУЩЕСТВ */
+        .features {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            padding: 0 15px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+            perspective: 1000px;
         }
 
-        .card {
-            background: rgba(20, 20, 20, 0.8);
-            border: 1px solid var(--border-color);
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
+        .card-3d {
+            background: var(--card-bg);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 30px;
+            transform-style: preserve-3d;
+            transition: transform 0.1s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            position: relative;
         }
 
-        .card i { color: var(--primary); font-size: 1.4rem; margin-bottom: 8px; display: block; }
-        .card h3 { font-family: 'Orbitron'; font-size: 0.75rem; margin-bottom: 5px; color: #fff; }
-        .card p { font-size: 0.65rem; color: #999; line-height: 1.3; }
+        .card-content {
+            transform: translateZ(40px); /* Выдвигаем текст вперед */
+        }
 
-        footer { text-align: center; margin-top: 40px; color: #444; font-size: 0.6rem; font-family: 'Orbitron'; }
+        .card-3d h3 {
+            color: var(--accent-green);
+            font-size: 20px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .card-3d p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .card-icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+            transform: translateZ(60px);
+            display: inline-block;
+        }
+
+        /* Адаптивность для мобильных */
+        @media (max-width: 768px) {
+            header { padding: 15px 20px; }
+            .features { padding: 20px; }
+            .btn-container { flex-direction: column; width: 100%; max-width: 300px; margin: 0 auto;}
+            .btn { width: 100%; text-align: center; }
+        }
     </style>
 </head>
 <body>
 
-<div class="mobile-wrapper">
+    <div class="glow-bg"></div>
+
     <header>
-        <div class="logo">AUTOPILOT.EXE</div>
-        <div class="status">UNDETECTED</div>
+        <div class="logo">AUTOPILOT</div>
+        <div class="version">NEURAL CORE v1.0</div>
     </header>
 
     <section class="hero">
-        <h1>LEVEL UP WHILE <br><span>YOU SLEEP</span></h1>
+        <h1 class="sound-hover">ВЕРДАНСК ЖДЕТ</h1>
+        <p>Интеллектуальная система управления с защитой Anti-Ricochet. Улучшенная гуманизация, полная автономность и криптографическая привязка к вашему железу.</p>
         
-        <div class="app-container">
-            <div class="app-3d-card">
-                <img src="app.png" alt="Autopilot App Interface">
+        <div class="btn-container">
+            <a href="https://t.me/SKIPPYManager" target="_blank" class="btn btn-primary sound-click sound-hover">Приобрести Ключ</a>
+            <a href="https://youtu.be/R_MGIDQ9s80" target="_blank" class="btn sound-click sound-hover">Смотреть Инструкцию</a>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="card-3d sound-hover">
+            <div class="card-content">
+                <div class="card-icon">🧠</div>
+                <h3>Smart Humanizer</h3>
+                <p>Настраиваемые ползунки точности и безопасности. Система добавляет случайные (Jitter) миллисекундные задержки между кликами, полностью имитируя поведение живого игрока для обхода античитов.</p>
             </div>
         </div>
 
-        <a href="https://t.me/SKIPPYManager" class="btn-glow">ПОЛУЧИТЬ ДОСТУП</a>
+        <div class="card-3d sound-hover">
+            <div class="card-content">
+                <div class="card-icon">⚔️</div>
+                <h3>Боевые Режимы</h3>
+                <p>Индивидуальные паттерны стрельбы: Ножи, Автоматическое оружие, Пистолеты (серийный огонь + скролл) и Снайперские винтовки (прожатие ЛКМ и ПКМ с идеальными таймингами).</p>
+            </div>
+        </div>
+
+        <div class="card-3d sound-hover">
+            <div class="card-content">
+                <div class="card-icon">🏃‍♂️</div>
+                <h3>Anti-AFK & Movement</h3>
+                <p>Встроенный скрипт парашюта и защиты от кика. Автоматическое выполнение комбинаций D-S-D каждую минуту и фоновое использование тактического снаряжения.</p>
+            </div>
+        </div>
+
+        <div class="card-3d sound-hover">
+            <div class="card-content">
+                <div class="card-icon">🔒</div>
+                <h3>HWID Безопасность</h3>
+                <p>Привязка лицензии к уникальному серийному номеру вашей материнской платы. Ключи шифруются по стандарту SHA-256 с внедренной солью для максимальной защиты аккаунта.</p>
+            </div>
+        </div>
     </section>
 
-    <div class="features-grid">
-        <div class="card">
-            <i class="fas fa-crosshairs"></i>
-            <h3>Macro Sniper</h3>
-            <p>Фаст-зум и идеальный сброс анимации.</p>
-        </div>
-        <div class="card">
-            <i class="fas fa-ghost"></i>
-            <h3>Anti-AFK</h3>
-            <p>Защита от кика за бездействие.</p>
-        </div>
-        <div class="card">
-            <i class="fas fa-fingerprint"></i>
-            <h3>Humanizer</h3>
-            <p>Имитация нажатий живого игрока.</p>
-        </div>
-        <div class="card">
-            <i class="fas fa-shield-halved"></i>
-            <h3>Security</h3>
-            <p>Внешний запуск без инжектов.</p>
-        </div>
-        <div class="card">
-            <i class="fas fa-microchip"></i>
-            <h3>External</h3>
-            <p>Полная невидимость для Ricochet.</p>
-        </div>
-        <div class="card">
-            <i class="fas fa-bolt"></i>
-            <h3>Instant</h3>
-            <p>Настройка за считанные минуты.</p>
-        </div>
-    </div>
+    <script>
+        // --- 1. АУДИО СИСТЕМА (Web Audio API) ---
+        // Создаем синтезатор звуков прямо в браузере (без скачивания mp3)
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
 
-    <footer>
-        © 2026 AUTOPILOT SYSTEMS | V.1.0 BY CASPER
-    </footer>
-</div>
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
 
-<script>
-    window.addEventListener('scroll', function() {
-        const card = document.querySelector('.app-3d-card');
-        // Скорость вращения (0.15 можно изменить для ускорения/замедления)
-        let rotation = window.scrollY * 0.15; 
-        // Вращение по Y и небольшой наклон по X для объема
-        card.style.transform = `rotateY(${rotation}deg) rotateX(${rotation * 0.05}deg)`;
-    });
-</script>
+        // Звук при наведении (тихий футуристичный "пик")
+        function playHoverSound() {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime); // Высота звука
+            gainNode.gain.setValueAtTime(0.02, audioCtx.currentTime); // Громкость
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.05);
+        }
 
+        // Звук при клике (глубокий технический "щелчок")
+        function playClickSound() {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        // Инициализируем аудио при первом клике/взаимодействии с сайтом (требование браузеров)
+        document.body.addEventListener('mouseenter', initAudio, {once: true});
+        document.body.addEventListener('click', initAudio, {once: true});
+
+        // Привязываем звуки к элементам
+        document.querySelectorAll('.sound-hover').forEach(el => {
+            el.addEventListener('mouseenter', playHoverSound);
+        });
+        document.querySelectorAll('.sound-click').forEach(el => {
+            el.addEventListener('click', playClickSound);
+        });
+
+        // --- 2. 3D АНИМАЦИЯ КАРТОЧЕК ПРИ НАВЕДЕНИИ МЫШИ ---
+        const cards = document.querySelectorAll('.card-3d');
+
+        cards.forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left; // x position within the element
+                const y = e.clientY - rect.top;  // y position within the element
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                // Вычисляем угол наклона
+                const rotateX = ((y - centerY) / centerY) * -15; // Max rotation 15deg
+                const rotateY = ((x - centerX) / centerX) * 15;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                card.style.borderColor = '#2ecc71';
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+                card.style.borderColor = '#333';
+            });
+        });
+    </script>
 </body>
 </html>
