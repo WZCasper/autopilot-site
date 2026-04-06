@@ -119,7 +119,7 @@
         }
 
         /* КНОПКИ */
-        .btn-group { display: flex; gap: 20px; margin-top: 30px; }
+        .btn-group { display: flex; gap: 20px; margin-top: 30px; flex-wrap: wrap; justify-content: center; }
 
         .btn {
             padding: 18px 35px;
@@ -131,10 +131,14 @@
             text-decoration: none;
             font-size: 14px;
             border: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .btn-red { background: var(--accent-red); color: white; }
         .btn-blue { background: var(--accent-blue); color: white; }
+        .btn-green { background: var(--accent-green); color: #000; }
 
         .btn:hover {
             transform: translateY(-5px) scale(1.05);
@@ -262,6 +266,9 @@
     </div>
 
     <div class="btn-group">
+        <a href="https://github.com/WZCasper/autopilot-site/releases/download/v.1.0/Autopilot.v1.0.rar" class="btn btn-green sound-btn">
+            <span>⬇️</span> СКАЧАТЬ
+        </a>
         <a href="https://www.youtube.com/watch?v=R_MGIDQ9s80" target="_blank" class="btn btn-red sound-btn">Инструкция</a>
         <a href="https://t.me/WZ_Casper" target="_blank" class="btn btn-blue sound-btn">Вопросы?</a>
     </div>
