@@ -3,1716 +3,667 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autopilot v2.1 · Anti-Ricochet · CASPER</title>
-
-    <!-- Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
-    </script>
-
+    <title>AUTOPILOT NEURAL CORE | Official Site by Casper</title>
     <style>
-        /* ============================================================
-               ROOT ПЕРЕМЕННЫЕ & СБРОС
-               ============================================================ */
         :root {
-            --bg: #0F0F0F;
-            --bg-card: #141414;
-            --bg-input: #1A1A1A;
-            --border-subtle: #2A2A2A;
+            --bg-color: #050505;
+            --card-bg: #111111;
+            --accent-green: #2ecc71;
+            --accent-blue: #0081cc;
+            --accent-red: #cc0000;
             --text-main: #FFFFFF;
             --text-muted: #888888;
-            --text-dim: #555555;
-
-            --neon-purple: #8e44ad;
-            --neon-green: #2ecc71;
-            --neon-gold: #f1c40f;
-            --neon-red: #e74c3c;
-            --neon-blue: #0081cc;
-            --neon-orange: #e67e22;
-
-            --glass-bg: rgba(15, 15, 15, 0.72);
-            --glass-border: rgba(255, 255, 255, 0.06);
-
-            --font: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-            --radius: 14px;
-            --shadow-card: 0 20px 60px rgba(0, 0, 0, 0.7);
-            --transition: 0.25s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-        *,
-        *::before,
-        *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-            -webkit-font-smoothing: antialiased;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            background: var(--bg);
+            background-color: var(--bg-color);
             color: var(--text-main);
-            font-family: var(--font);
-            font-size: 15px;
-            line-height: 1.6;
+            font-family: 'Segoe UI', sans-serif;
             overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #050505 100%);
         }
 
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        img {
-            display: block;
-            max-width: 100%;
-        }
-
-        /* ============================================================
-               СКРОЛЛБАР
-               ============================================================ */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--bg);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--neon-purple);
-            border-radius: 10px;
-        }
-
-        /* ============================================================
-               КОНТЕЙНЕР
-               ============================================================ */
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        /* ============================================================
-               ШАПКА / НАВИГАЦИЯ
-               ============================================================ */
-        .header {
+        /* СЕТКА ГРАФИКА НА ФОНЕ */
+        body::before {
+            content: '';
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            padding: 14px 0;
-            background: var(--glass-bg);
-            backdrop-filter: blur(18px) saturate(1.4);
-            border-bottom: 1px solid var(--glass-border);
-            transition: var(--transition);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(46, 204, 113, 0.05) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(46, 204, 113, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
         }
 
-        .header-inner {
+        header {
+            padding: 30px 10%;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px 20px;
-        }
-
-        .logo {
-            display: flex;
             align-items: center;
-            gap: 10px;
-            font-weight: 800;
-            font-size: 20px;
-            letter-spacing: 1px;
-        }
-        .logo-icon {
-            font-size: 28px;
-            color: var(--neon-gold);
-        }
-        .logo span {
-            color: var(--text-muted);
-            font-weight: 400;
-            font-size: 13px;
+            border-bottom: 1px solid #222;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0; z-index: 1000;
         }
 
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 28px;
-            list-style: none;
-            font-size: 13px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .nav-links a {
-            color: var(--text-muted);
-            transition: var(--transition);
-            position: relative;
-        }
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0%;
-            height: 2px;
-            background: var(--neon-purple);
-            transition: var(--transition);
-        }
-        .nav-links a:hover {
-            color: var(--text-main);
-        }
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        .nav-cta {
-            background: var(--neon-purple);
-            color: #fff !important;
-            padding: 8px 22px;
-            border-radius: 30px;
-            font-weight: 700;
-            transition: var(--transition);
-            box-shadow: 0 0 20px rgba(142, 68, 173, 0.25);
-        }
-        .nav-cta:hover {
-            transform: scale(1.04);
-            box-shadow: 0 0 35px rgba(142, 68, 173, 0.45);
-        }
-        .nav-cta::after {
-            display: none !important;
-        }
-
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-            background: none;
-            border: none;
-            padding: 4px;
-        }
-        .hamburger span {
-            width: 26px;
-            height: 2px;
-            background: var(--text-main);
-            border-radius: 4px;
-            transition: var(--transition);
-        }
-
-        /* ============================================================
-               ГЕРОЙ
-               ============================================================ */
-        .hero {
-            position: relative;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            padding: 120px 0 80px;
-            overflow: hidden;
-        }
-
-        #three-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: center;
-        }
-
-        .hero-text h1 {
-            font-size: clamp(36px, 5.5vw, 68px);
+        .logo-text {
+            font-size: 24px;
             font-weight: 900;
-            line-height: 1.08;
-            letter-spacing: -1px;
-            margin-bottom: 20px;
-        }
-        .hero-text h1 .highlight {
-            background: linear-gradient(135deg, var(--neon-purple), var(--neon-green));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .hero-text p {
-            color: var(--text-muted);
-            font-size: 18px;
-            max-width: 520px;
-            margin-bottom: 32px;
-        }
-
-        .hero-btns {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 14px;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 14px 32px;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border: none;
-            cursor: pointer;
-            transition: var(--transition);
-            background: var(--bg-input);
+            letter-spacing: 3px;
             color: var(--text-main);
-            border: 1px solid var(--border-subtle);
-        }
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
         }
 
-        .btn-primary {
-            background: var(--neon-purple);
-            border-color: var(--neon-purple);
-            color: #fff;
-            box-shadow: 0 0 30px rgba(142, 68, 173, 0.25);
-        }
-        .btn-primary:hover {
-            box-shadow: 0 0 50px rgba(142, 68, 173, 0.45);
-        }
-
-        .btn-green {
-            background: var(--neon-green);
-            border-color: var(--neon-green);
-            color: #000;
-            box-shadow: 0 0 30px rgba(46, 204, 113, 0.2);
-        }
-        .btn-green:hover {
-            box-shadow: 0 0 50px rgba(46, 204, 113, 0.4);
-        }
-
-        .btn-red {
-            background: var(--neon-red);
-            border-color: var(--neon-red);
-            color: #fff;
-        }
-        .btn-red:hover {
-            box-shadow: 0 0 40px rgba(231, 76, 60, 0.35);
-        }
-
-        .btn-blue {
-            background: var(--neon-blue);
-            border-color: var(--neon-blue);
-            color: #fff;
-        }
-        .btn-blue:hover {
-            box-shadow: 0 0 40px rgba(0, 129, 204, 0.35);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border-color: var(--border-subtle);
-        }
-        .btn-outline:hover {
-            border-color: var(--text-muted);
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        /* ---- 3D ПРЕВЬЮ ПРИЛОЖЕНИЯ ---- */
-        .app-preview-3d {
-            perspective: 1200px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .app-frame {
-            width: 100%;
-            max-width: 460px;
-            aspect-ratio: 9 / 11;
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            border: 1px solid var(--border-subtle);
-            box-shadow: var(--shadow-card), 0 0 60px rgba(142, 68, 173, 0.08);
-            transform: rotateX(6deg) rotateY(-8deg) rotateZ(2deg);
-            transition: transform 0.3s ease, box-shadow 0.4s ease;
-            transform-style: preserve-3d;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            padding: 20px 18px 16px;
-            position: relative;
-        }
-
-        .app-frame::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: var(--radius);
-            padding: 1px;
-            background: linear-gradient(135deg, rgba(142, 68, 173, 0.25), transparent 60%);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            pointer-events: none;
-        }
-
-        .app-frame:hover {
-            transform: rotateX(2deg) rotateY(-3deg) rotateZ(1deg) scale(1.01);
-            box-shadow: var(--shadow-card), 0 0 80px rgba(142, 68, 173, 0.15);
-        }
-
-        .app-frame-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border-subtle);
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-        }
-        .app-frame-header .badge {
-            color: var(--neon-green);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .app-frame-header .badge .dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: var(--neon-green);
-            box-shadow: 0 0 12px var(--neon-green);
-            animation: pulse-dot 1.6s infinite;
-        }
-
-        @keyframes pulse-dot {
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.3;
-                transform: scale(1.3);
-            }
-        }
-
-        .app-frame-body {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding-top: 12px;
-            overflow: hidden;
-        }
-
-        .app-tabs-mini {
-            display: flex;
-            gap: 4px;
-            background: var(--bg-input);
-            border-radius: 8px;
-            padding: 3px;
-        }
-        .app-tabs-mini .tab-mini {
-            flex: 1;
-            text-align: center;
-            padding: 5px 0;
-            font-size: 9px;
-            font-weight: 700;
-            text-transform: uppercase;
-            border-radius: 6px;
-            color: var(--text-dim);
-            transition: var(--transition);
-            cursor: default;
-        }
-        .app-tabs-mini .tab-mini.active {
-            background: var(--neon-purple);
-            color: #fff;
-        }
-
-        .app-row {
+        /* ПУЛЬСАЦИЯ СТАТУСА */
+        .status-active {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 10px;
-            color: var(--text-muted);
-        }
-        .app-row .label {
-            min-width: 56px;
-            font-weight: 600;
-            color: var(--text-dim);
-        }
-        .app-row .bar {
-            flex: 1;
-            height: 4px;
-            background: var(--bg-input);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .app-row .bar .fill {
-            height: 100%;
-            border-radius: 4px;
-            background: linear-gradient(90deg, var(--neon-purple), var(--neon-green));
-            width: 43%;
-        }
-        .app-row .val {
-            font-weight: 700;
-            color: var(--text-main);
-            min-width: 28px;
-            text-align: right;
-        }
-
-        .app-log-preview {
-            margin-top: 4px;
-            background: var(--bg-input);
-            border-radius: 8px;
-            padding: 8px 10px;
-            font-size: 9px;
-            font-family: 'JetBrains Mono', 'Consolas', monospace;
-            color: var(--neon-green);
-            border-left: 2px solid var(--neon-purple);
-            min-height: 48px;
-            display: flex;
-            align-items: center;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-        .app-log-preview .log-text {
-            animation: scroll-log 12s linear infinite;
-        }
-        @keyframes scroll-log {
-            0% {
-                transform: translateX(100%);
-            }
-            100% {
-                transform: translateX(-100%);
-            }
-        }
-
-        /* ============================================================
-               ИНТЕРАКТИВНЫЙ СИМУЛЯТОР
-               ============================================================ */
-        .simulator {
-            padding: 80px 0 100px;
-            background: linear-gradient(180deg, var(--bg), var(--bg-card));
-        }
-
-        .simulator-header {
-            text-align: center;
-            margin-bottom: 48px;
-        }
-        .simulator-header h2 {
-            font-size: clamp(28px, 3.8vw, 44px);
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-        .simulator-header h2 span {
-            color: var(--neon-purple);
-        }
-        .simulator-header p {
-            color: var(--text-muted);
-            margin-top: 8px;
-            font-size: 17px;
-        }
-
-        .sim-card {
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            border: 1px solid var(--border-subtle);
-            padding: 30px 28px;
-            box-shadow: var(--shadow-card);
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .sim-tabs {
-            display: flex;
-            gap: 4px;
-            background: var(--bg-input);
-            border-radius: 10px;
-            padding: 4px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-        }
-        .sim-tabs .st-btn {
-            flex: 1;
-            min-width: 80px;
-            padding: 10px 12px;
-            border: none;
-            border-radius: 8px;
-            background: transparent;
-            color: var(--text-muted);
-            font-weight: 700;
+            color: var(--accent-green);
             font-size: 12px;
+            font-weight: bold;
             text-transform: uppercase;
-            cursor: pointer;
-            transition: var(--transition);
-            letter-spacing: 0.3px;
-            font-family: var(--font);
-        }
-        .sim-tabs .st-btn:hover {
-            color: var(--text-main);
-            background: rgba(255, 255, 255, 0.03);
-        }
-        .sim-tabs .st-btn.active {
-            background: var(--neon-purple);
-            color: #fff;
-            box-shadow: 0 0 20px rgba(142, 68, 173, 0.25);
         }
 
-        .sim-panel {
-            display: none;
-            animation: fade-up 0.3s ease;
-        }
-        .sim-panel.active {
-            display: block;
-        }
-
-        @keyframes fade-up {
-            from {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .sim-panel-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px 28px;
-        }
-        .sim-panel-grid .full {
-            grid-column: 1 / -1;
-        }
-
-        .sim-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .sim-group label {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-dim);
-        }
-
-        .sim-slider-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .sim-slider-row input[type="range"] {
-            flex: 1;
-            height: 4px;
-            -webkit-appearance: none;
-            background: var(--bg-input);
-            border-radius: 4px;
-            outline: none;
-            transition: var(--transition);
-        }
-        .sim-slider-row input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-green);
             border-radius: 50%;
-            background: var(--neon-green);
-            cursor: pointer;
-            box-shadow: 0 0 16px rgba(46, 204, 113, 0.3);
-        }
-        .sim-slider-row .sval {
-            font-weight: 700;
-            font-size: 13px;
-            min-width: 36px;
-            text-align: right;
-            color: var(--text-main);
+            box-shadow: 0 0 10px var(--accent-green);
+            animation: pulse 1.5s infinite;
         }
 
-        .sim-check {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-            color: var(--text-muted);
-            cursor: pointer;
-            padding: 4px 0;
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
         }
-        .sim-check input[type="checkbox"] {
-            -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            border: 2px solid var(--border-subtle);
-            border-radius: 5px;
-            background: var(--bg-input);
-            cursor: pointer;
-            transition: var(--transition);
-            flex-shrink: 0;
-        }
-        .sim-check input[type="checkbox"]:checked {
-            background: var(--neon-purple);
-            border-color: var(--neon-purple);
-            box-shadow: 0 0 16px rgba(142, 68, 173, 0.25);
-        }
-        .sim-check input[type="checkbox"]:checked::after {
-            content: '✓';
+
+        /* ГЛАВНЫЙ ЭКРАН */
+        .hero {
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
-            font-weight: 700;
-            font-size: 13px;
-        }
-        .sim-check .ck-label {
-            font-weight: 600;
-            color: var(--text-main);
+            flex-direction: column;
+            padding: 80px 5%;
+            text-align: center;
         }
 
-        .sim-log-window {
-            margin-top: 24px;
-            background: var(--bg-input);
-            border-radius: 10px;
-            border: 1px solid var(--border-subtle);
-            padding: 14px 16px;
-            min-height: 80px;
-            max-height: 120px;
-            overflow-y: auto;
-            font-family: 'JetBrains Mono', 'Consolas', monospace;
-            font-size: 11px;
-            line-height: 1.7;
-            color: var(--neon-green);
-        }
-        .sim-log-window .log-entry {
-            opacity: 0;
-            animation: log-in 0.2s ease forwards;
-        }
-        .sim-log-window .log-entry .ts {
-            color: var(--text-dim);
-            margin-right: 10px;
-        }
-        .sim-log-window .log-entry .hl {
-            color: var(--neon-gold);
+        .hero h1 {
+            font-size: 60px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            background: linear-gradient(to bottom, #fff, #666);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        @keyframes log-in {
-            from {
-                opacity: 0;
-                transform: translateX(-6px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        /* 3D ИЗОБРАЖЕНИЕ ПРОГРАММЫ */
+        .app-preview-container {
+            perspective: 2000px;
+            margin: 50px 0;
         }
 
-        /* ============================================================
-               ОСОБЕННОСТИ (КАРТОЧКИ)
-               ============================================================ */
-        .features {
-            padding: 80px 0 100px;
+        .app-img {
+            width: 320px;
+            border-radius: 15px;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8), 0 0 40px rgba(46, 204, 113, 0.2);
+            transform: rotateX(10deg) rotateY(-15deg) rotateZ(2deg);
+            transition: transform 0.5s ease;
+            border: 1px solid #333;
         }
+
+        .app-preview-container:hover .app-img {
+            transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.05);
+        }
+
+        /* КНОПКИ */
+        .btn-group { display: flex; gap: 20px; margin-top: 30px; flex-wrap: wrap; justify-content: center; }
+
+        .btn {
+            padding: 18px 35px;
+            border-radius: 5px;
+            text-transform: uppercase;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            font-size: 14px;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-red { background: var(--accent-red); color: white; }
+        .btn-blue { background: var(--accent-blue); color: white; }
+        .btn-green { background: var(--accent-green); color: #000; }
+
+        .btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            filter: brightness(1.2);
+        }
+
+        /* СЕТКА ДОСТОИНСТВ (6 карточек) */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 28px;
-            margin-top: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 50px 10%;
+            perspective: 1500px;
         }
-        .feat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius);
-            padding: 32px 28px;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid #222;
+            transition: 0.1s;
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .feat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--neon-purple), var(--neon-green));
-            opacity: 0;
-            transition: var(--transition);
+
+        .feature-card:hover {
+            border-color: var(--accent-green);
         }
-        .feat-card:hover {
-            border-color: var(--neon-purple);
-            transform: translateY(-6px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+
+        .feature-card h3 {
+            color: var(--accent-green);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            transform: translateZ(30px);
         }
-        .feat-card:hover::before {
-            opacity: 1;
-        }
-        .feat-card .icon {
-            font-size: 32px;
-            margin-bottom: 14px;
-        }
-        .feat-card h3 {
-            font-size: 16px;
-            font-weight: 800;
-            margin-bottom: 8px;
-            letter-spacing: -0.2px;
-        }
-        .feat-card p {
+
+        .feature-card p {
             color: var(--text-muted);
             font-size: 14px;
             line-height: 1.6;
+            transform: translateZ(20px);
         }
 
-        /* ============================================================
-               ЦЕНЫ
-               ============================================================ */
-        .pricing {
-            padding: 80px 0 100px;
-            background: linear-gradient(180deg, var(--bg-card), var(--bg));
+        .icon-box {
+            font-size: 30px;
+            margin-bottom: 20px;
+            transform: translateZ(50px);
         }
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-        .price-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius);
-            padding: 36px 30px;
+
+        /* СЕКЦИЯ ПОКУПКИ С 3D КНОПКОЙ */
+        .buy-section {
+            padding: 100px 10%;
             text-align: center;
-            transition: var(--transition);
+            background: linear-gradient(to bottom, transparent, rgba(46, 204, 113, 0.05));
+        }
+
+        .price-card {
+            display: inline-block;
+            padding: 50px 60px;
+            background: var(--card-bg);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+            transition: border-color 0.3s ease;
+        }
+
+        .price-card:hover {
+            border-color: var(--accent-green);
+        }
+
+        /* 3D КНОПКА ПРИОБРЕСТИ */
+        .btn-3d {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 20px 60px;
+            font-size: 18px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #000;
+            text-decoration: none;
+            background: linear-gradient(to bottom, #2ecc71, #27ae60);
+            border-radius: 12px;
+            box-shadow: 0 8px 0 #196f3d, 0 15px 20px rgba(0, 0, 0, 0.4);
+            transition: all 0.1s ease;
             position: relative;
         }
-        .price-card.popular {
-            border-color: var(--neon-purple);
-            box-shadow: 0 0 40px rgba(142, 68, 173, 0.08);
-        }
-        .price-card.popular::after {
-            content: 'ПОПУЛЯРНО';
-            position: absolute;
-            top: -10px;
-            right: 20px;
-            background: var(--neon-purple);
-            color: #fff;
-            font-size: 9px;
-            font-weight: 800;
-            padding: 4px 14px;
-            border-radius: 20px;
-            letter-spacing: 0.5px;
-        }
-        .price-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--neon-purple);
-        }
-        .price-card .name {
-            font-size: 14px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-        }
-        .price-card .price {
-            font-size: 40px;
-            font-weight: 900;
-            margin: 12px 0 4px;
-        }
-        .price-card .price small {
-            font-size: 16px;
-            font-weight: 400;
-            color: var(--text-muted);
-        }
-        .price-card .desc {
-            color: var(--text-muted);
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-        .price-card ul {
-            list-style: none;
-            text-align: left;
-            margin: 16px 0 24px;
-            font-size: 14px;
-        }
-        .price-card ul li {
-            padding: 6px 0;
-            border-bottom: 1px solid var(--border-subtle);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .price-card ul li::before {
-            content: '✦';
-            color: var(--neon-green);
+
+        .btn-3d:hover {
+            background: linear-gradient(to bottom, #35da7a, #2ecc71);
+            transform: translateY(2px);
+            box-shadow: 0 6px 0 #196f3d, 0 10px 15px rgba(0, 0, 0, 0.4);
         }
 
-        /* ============================================================
-               ПОДВАЛ
-               ============================================================ */
-        .footer {
-            padding: 40px 0 30px;
-            border-top: 1px solid var(--border-subtle);
-            text-align: center;
-            color: var(--text-dim);
-            font-size: 13px;
-        }
-        .footer .links {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-        }
-        .footer .links a {
-            color: var(--text-muted);
-            transition: var(--transition);
-            font-weight: 600;
-            font-size: 13px;
-        }
-        .footer .links a:hover {
-            color: var(--text-main);
-        }
-
-        /* ============================================================
-               АДАПТИВНОСТЬ
-               ============================================================ */
-        @media (max-width: 1024px) {
-            .hero-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            .hero-text p {
-                margin-left: auto;
-                margin-right: auto;
-            }
-            .hero-btns {
-                justify-content: center;
-            }
-            .app-preview-3d {
-                order: -1;
-            }
-            .app-frame {
-                max-width: 380px;
-                margin: 0 auto;
-            }
-            .sim-panel-grid {
-                grid-template-columns: 1fr;
-            }
+        .btn-3d:active {
+            transform: translateY(8px);
+            box-shadow: 0 0 0 #196f3d, 0 2px 5px rgba(0, 0, 0, 0.4);
         }
 
         @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                width: 100%;
-                padding: 16px 0;
-                gap: 14px;
-                background: var(--bg-card);
-                border-radius: var(--radius);
-                border: 1px solid var(--border-subtle);
-            }
-            .nav-links.open {
-                display: flex;
-            }
-            .hamburger {
-                display: flex;
-            }
-            .header-inner {
-                flex-wrap: wrap;
-            }
-            .app-frame {
-                max-width: 320px;
-            }
-            .sim-tabs .st-btn {
-                min-width: 60px;
-                font-size: 10px;
-                padding: 8px 8px;
-            }
-            .sim-card {
-                padding: 20px 16px;
-            }
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-            .pricing-grid {
-                grid-template-columns: 1fr;
-            }
-            .price-card.popular::after {
-                right: 10px;
-                font-size: 8px;
-                padding: 3px 10px;
-            }
+            .hero h1 { font-size: 35px; }
+            .app-img { width: 250px; }
+            .price-card { padding: 40px 20px; width: 100%; }
+            .btn-3d { padding: 20px 40px; font-size: 16px; }
         }
 
-        @media (max-width: 480px) {
-            .hero {
-                padding: 100px 0 60px;
-            }
-            .hero-text h1 {
-                font-size: 28px;
-            }
-            .app-frame {
-                max-width: 280px;
-                padding: 14px 12px 12px;
-            }
-            .app-log-preview {
-                font-size: 8px;
-                min-height: 36px;
-                padding: 6px 8px;
-            }
-            .sim-log-window {
-                font-size: 10px;
-                min-height: 60px;
-                max-height: 90px;
-            }
-            .btn {
-                padding: 10px 20px;
-                font-size: 12px;
-            }
+        /* --- СТИЛИ ПАНЕЛИ АДМИНИСТРАТОРА (ШИРОКАЯ) --- */
+        #admin-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 9999;
+            opacity: 0.2;
+            transition: 0.3s;
+            user-select: none;
         }
+
+        #admin-icon:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .admin-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            padding: 20px;
+        }
+
+        .admin-panel {
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 15px;
+            border: 1px solid var(--accent-green);
+            width: 100%;
+            max-width: 1250px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 0 50px rgba(46, 204, 113, 0.1);
+        }
+
+        .admin-input {
+            width: 100%;
+            padding: 12px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            color: var(--text-main);
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-family: inherit;
+        }
+
+        .admin-input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+        }
+
+        .keys-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .keys-table th, .keys-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #222;
+        }
+
+        .keys-table th {
+            color: var(--accent-green);
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .keys-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .action-btn {
+            background: transparent;
+            border: 1px solid;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.2s;
+            margin-right: 5px;
+        }
+
+        .btn-copy { border-color: var(--accent-blue); color: var(--accent-blue); }
+        .btn-copy:hover { background: var(--accent-blue); color: #fff; }
+        
+        .btn-edit { border-color: #f39c12; color: #f39c12; }
+        .btn-edit:hover { background: #f39c12; color: #fff; }
     </style>
 </head>
 <body>
 
-    <!-- ============================================================
-    ШАПКА
-    ============================================================ -->
-    <header class="header" id="header">
-        <div class="container header-inner">
-            <div class="logo">
-                <span class="logo-icon">⚡</span>
-                Autopilot <span>v2.1</span>
-            </div>
+<header>
+    <div class="logo-text">AUTOPILOT V2.2</div>
+    <div class="status-active">
+        <div class="status-dot"></div>
+        ANTI-RICOCHET ACTIVE
+    </div>
+</header>
 
-            <button class="hamburger" id="hamburger" aria-label="Меню">
-                <span></span><span></span><span></span>
-            </button>
+<section class="hero">
+    <h1>AUTOPILOT v2.2</h1>
+    <p style="color: var(--text-muted); max-width: 700px;">Профессиональное решение для автоматизации и гуманизации игрового процесса с многоуровневой защитой в Call of Duty.</p>
+    
+    <div class="app-preview-container">
+        <img src="app_interface.png" alt="Autopilot Interface" class="app-img">
+    </div>
 
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#features">Возможности</a></li>
-                <li><a href="#simulator">Интерфейс</a></li>
-                <li><a href="#pricing">Цены</a></li>
-                <li><a href="https://t.me/WZ_Casper" target="_blank">Поддержка</a></li>
-                <li><a href="#pricing" class="nav-cta">Купить доступ</a></li>
-            </ul>
+    <div class="btn-group">
+        <a href="https://github.com/WZCasper/autopilot-site/releases/download/v.1.1/Autopilot.v2.1.exe" class="btn btn-green sound-btn">
+            <span>⬇️</span> СКАЧАТЬ
+        </a>
+        <a href="https://www.youtube.com/watch?v=R_MGIDQ9s80" target="_blank" class="btn btn-red sound-btn">Инструкция</a>
+        <a href="https://t.me/WZ_Casper" target="_blank" class="btn btn-blue sound-btn">Вопросы?</a>
+    </div>
+</section>
+
+<section class="features-grid">
+    <div class="feature-card sound-hover">
+        <div class="icon-box">🛡️</div>
+        <h3>Anti-Ricochet</h3>
+        <p>Уникальные алгоритмы взаимодействия с системой, имитирующие работу стандартных HID-устройств для обхода систем обнаружения.</p>
+    </div>
+
+    <div class="feature-card sound-hover">
+        <div class="icon-box">⚡</div>
+        <h3>Умная Гуманизация</h3>
+        <p>Настраиваемый уровень "Humanizer" добавляет микро-отклонения и рандомные задержки, делая стрельбу неотличимой от человеческой.</p>
+    </div>
+
+    <div class="feature-card sound-hover">
+        <div class="icon-box">🎯</div>
+        <h3>Multi-Mode</h3>
+        <p>Поддержка четырех режимов: Ножи, Автоматика, Пистолеты и Снайперские винтовки с индивидуальными таймингами для каждого.</p>
+    </div>
+
+    <div class="feature-card sound-hover">
+        <div class="icon-box">⌨️</div>
+        <h3>Hotkeys Control</h3>
+        <p>Полная свобода настройки горячих клавиш Старт/Стоп на любые функциональные кнопки F1-F9 прямо в интерфейсе.</p>
+    </div>
+
+    <div class="feature-card sound-hover">
+        <div class="icon-box">🔄</div>
+        <h3>Anti-AFK System</h3>
+        <p>Автоматическое предотвращение исключения из матча за бездействие с использованием сложных паттернов передвижения (D-S-D).</p>
+    </div>
+
+    <div class="feature-card sound-hover">
+        <div class="icon-box">🔐</div>
+        <h3>HWID Binding</h3>
+        <p>Безопасная система лицензирования с привязкой к железу пользователя, исключающая несанкционированный доступ к вашему коду лицензии.</p>
+    </div>
+</section>
+
+<section class="buy-section">
+    <div class="price-card">
+        <h2 style="font-size: 32px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px;">
+            ПОЛУЧИТЬ ДОСТУП
+        </h2>
+        <p style="color: var(--text-muted); margin-bottom: 10px; font-size: 15px;">
+            Активация Neural Core v2.2 происходит через официального менеджера.
+        </p>
+        
+        <a href="https://t.me/SKIPPYManager" target="_blank" class="btn-3d sound-btn">ПРИОБРЕСТИ</a>
+        
+        <p style="color: #444; font-size: 11px; margin-top: 30px; text-transform: uppercase; font-weight: bold;">
+            Мгновенная выдача ключа после оплаты
+        </p>
+    </div>
+</section>
+
+<!-- ИКОНКА ДОСТУПА -->
+<div id="admin-icon" title="System Core">🗝️</div>
+
+<!-- МОДАЛЬНОЕ ОКНО ГЕНЕРАТОРА -->
+<div id="admin-modal" class="admin-modal">
+    <div class="admin-panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h2 style="color: var(--accent-green); letter-spacing: 2px;">ГЕНЕРАТОР КЛЮЧЕЙ АВТОПИЛОТА</h2>
+            <span id="close-admin" style="cursor: pointer; font-size: 28px; color: var(--text-muted);">&times;</span>
         </div>
-    </header>
 
-    <!-- ============================================================
-    ГЕРОЙ
-    ============================================================ -->
-    <section class="hero" id="hero">
-        <canvas id="three-canvas"></canvas>
-
-        <div class="container hero-content">
-            <div class="hero-text">
-                <h1>
-                    <span class="highlight">Autopilot</span> v2.1<br>
-                    <span style="font-size:0.6em;color:var(--text-muted);">Anti-Ricochet</span>
-                </h1>
-                <p>
-                    Профессиональная система автоматизации и гуманизации
-                    для <strong>Call of Duty</strong> с многоуровневой защитой
-                    и интеллектуальным обходом античитов.
-                </p>
-                <div class="hero-btns">
-                    <a href="https://github.com/WZCasper/autopilot-site/releases/latest" target="_blank" class="btn btn-green">
-                        ⬇️ Скачать
-                    </a>
-                    <a href="https://youtu.be/R_MGIDQ9s80" target="_blank" class="btn btn-red">
-                        📺 Инструкция
-                    </a>
-                    <a href="https://t.me/WZ_Casper" target="_blank" class="btn btn-blue">
-                        💬 Telegram
-                    </a>
-                </div>
-            </div>
-
-            <div class="app-preview-3d" id="appPreview3d">
-                <div class="app-frame" id="appFrame">
-                    <div class="app-frame-header">
-                        <span>⚡ AUTOPILOT v2.1</span>
-                        <span class="badge">
-                            <span class="dot"></span> РАБОТАЕТ
-                        </span>
-                    </div>
-                    <div class="app-frame-body">
-                        <div class="app-tabs-mini">
-                            <span class="tab-mini active">🌀 VIP</span>
-                            <span class="tab-mini">🔪 Ножи</span>
-                            <span class="tab-mini">🔥 Авто</span>
-                            <span class="tab-mini">🔫 Пист.</span>
-                            <span class="tab-mini">🎯 Снайп.</span>
-                        </div>
-
-                        <div class="app-row">
-                            <span class="label">Гуманизация</span>
-                            <div class="bar"><div class="fill" style="width:43%;"></div></div>
-                            <span class="val">43%</span>
-                        </div>
-
-                        <div class="app-row">
-                            <span class="label">Анти-AFK</span>
-                            <span style="color:var(--neon-green);font-weight:700;font-size:10px;">● Вкл</span>
-                            <span style="color:var(--text-dim);font-size:9px;margin-left:auto;">L-Ctrl+Space</span>
-                        </div>
-
-                        <div class="app-row" style="justify-content:space-between;flex-wrap:wrap;gap:4px;">
-                            <span style="font-size:9px;color:var(--text-dim);">Броня G ▸ 15с</span>
-                            <span style="font-size:9px;color:var(--text-dim);">Гранаты Q/E ▸ 42с / 2м</span>
-                            <span style="font-size:9px;color:var(--text-dim);">Мод X ▸ 57с</span>
-                        </div>
-
-                        <div class="app-log-preview">
-                            <span class="log-text">⚡ КНПП — Активация  •  🏃 ДВИЖЕНИЕ (Анти-кик)  •  🔪 Нож — Быстрый клик ЛКМ  •  🎯 Снайперка — Выстрел</span>
-                        </div>
-
-                        <div style="display:flex;gap:6px;margin-top:auto;padding-top:8px;border-top:1px solid var(--border-subtle);font-size:9px;color:var(--text-dim);">
-                            <span>🛡️ Anti-Ricochet</span>
-                            <span style="margin-left:auto;">by CASPER</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div style="display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 15px;">
+            <input type="text" id="hwid-input" class="admin-input" placeholder="ID устройства (HWID)">
+            <input type="text" id="name-input" class="admin-input" placeholder="Имя пользователя (Кому выдан)">
+            <select id="duration-input" class="admin-input">
+                <option value="1">1 День</option>
+                <option value="7">7 Дней</option>
+                <option value="30" selected>30 Дней</option>
+                <option value="999">Навсегда</option>
+            </select>
         </div>
-    </section>
+        
+        <button id="generate-key-btn" class="btn btn-green sound-btn" style="width: 100%; justify-content: center; margin-top: 5px;">СГЕНЕРИРОВАТЬ И СОХРАНИТЬ</button>
 
-    <!-- ============================================================
-    ИНТЕРАКТИВНЫЙ СИМУЛЯТОР
-    ============================================================ -->
-    <section class="simulator" id="simulator">
-        <div class="container">
-            <div class="simulator-header">
-                <h2>🧪 <span>Интерактивный</span> симулятор</h2>
-                <p>Переключайте вкладки, двигайте ползунки и наблюдайте за логами в реальном времени</p>
-            </div>
-
-            <div class="sim-card">
-                <!-- Вкладки -->
-                <div class="sim-tabs" id="simTabs">
-                    <button class="st-btn active" data-tab="vip">🌀 VIP</button>
-                    <button class="st-btn" data-tab="knife">🔪 Ножи</button>
-                    <button class="st-btn" data-tab="auto">🔥 Автоматическое</button>
-                    <button class="st-btn" data-tab="pistol">🔫 Пистолеты</button>
-                    <button class="st-btn" data-tab="sniper">🎯 Снайперские</button>
-                </div>
-
-                <!-- VIP панель -->
-                <div class="sim-panel active" data-panel="vip">
-                    <div class="sim-panel-grid">
-                        <div class="full">
-                            <div class="sim-group">
-                                <label>Последовательность режимов</label>
-                                <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                                    <span style="background:var(--bg-input);padding:4px 12px;border-radius:6px;font-size:12px;border:1px solid var(--border-subtle);">1. Автомат</span>
-                                    <span style="background:var(--bg-input);padding:4px 12px;border-radius:6px;font-size:12px;border:1px solid var(--border-subtle);">2. Автомат</span>
-                                    <span style="background:var(--bg-input);padding:4px 12px;border-radius:6px;font-size:12px;border:1px solid var(--border-subtle);">3. Пистолет</span>
-                                    <span style="background:var(--bg-input);padding:4px 12px;border-radius:6px;font-size:12px;border:1px solid var(--border-subtle);">4. Нож</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="full">
-                            <div class="sim-group">
-                                <label>Гуманизация</label>
-                                <div class="sim-slider-row">
-                                    <span style="font-size:10px;color:var(--text-dim);">ТОЧНОСТЬ</span>
-                                    <input type="range" min="0" max="50" value="43" id="humanSlider">
-                                    <span class="sval" id="humanVal">43%</span>
-                                    <span style="font-size:10px;color:var(--text-dim);">БЕЗОПАСНОСТЬ</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="sim-group">
-                                <label>Анти-AFK</label>
-                                <label class="sim-check">
-                                    <input type="checkbox" checked id="afkCheck">
-                                    <span class="ck-label">L-Ctrl + Space</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="sim-group">
-                                <label>Экипировка</label>
-                                <label class="sim-check"><input type="checkbox" checked> <span class="ck-label">Броня (G) 15с</span></label>
-                                <label class="sim-check"><input type="checkbox" checked> <span class="ck-label">Граната левая (Q) 42с</span></label>
-                                <label class="sim-check"><input type="checkbox"> <span class="ck-label">Граната правая (E) 2м</span></label>
-                                <label class="sim-check"><input type="checkbox"> <span class="ck-label">Полев.модиф. (X) 57с</span></label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="sim-group">
-                                <label>Движения</label>
-                                <label class="sim-check"><input type="checkbox" checked> <span class="ck-label">Вперёд (W) 30м</span></label>
-                                <label class="sim-check"><input type="checkbox"> <span class="ck-label">Назад (S) 5м</span></label>
-                                <label class="sim-check"><input type="checkbox"> <span class="ck-label">Влево (A) 1м</span></label>
-                                <label class="sim-check"><input type="checkbox" checked> <span class="ck-label">Вправо (D) 5м 5с</span></label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="sim-group">
-                                <label>Сдвиг прицела</label>
-                                <label class="sim-check"><input type="checkbox"> <span class="ck-label">Вверх (Y-) 10px · 1м</span></label>
-                                <label class="sim-check"><input type="checkbox" checked> <span class="ck-label">Вниз (Y+) 250px · 3м 11с</span></label>
-                                <label class="sim-check"><input type="checkbox"> <span class="ck-label">Влево (X-) 10px · 1м</span></label>
-                                <label class="sim-check"><input type="checkbox"> <span class="ck-label">Вправо (X+) 10px · 1м</span></label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Ножи -->
-                <div class="sim-panel" data-panel="knife">
-                    <div class="sim-panel-grid">
-                        <div class="full">
-                            <div class="sim-group">
-                                <label>Режим ножей — высокоскоростные круговые макросы</label>
-                                <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;">
-                                    <label class="sim-check"><input type="checkbox" checked> <span class="ck-label">Круговой удар</span></label>
-                                    <label class="sim-check"><input type="checkbox"> <span class="ck-label">Добивание</span></label>
-                                    <label class="sim-check"><input type="checkbox" checked> <span class="ck-label">Смена оружия после</span></label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="full">
-                            <div class="sim-group">
-                                <label>Гуманизация</label>
-                                <div class="sim-slider-row">
-                                    <span style="font-size:10px;color:var(--text-dim);">ТОЧНОСТЬ</span>
-                                    <input type="range" min="0" max="50" value="28" id="humanSliderKnife">
-                                    <span class="sval" id="humanValKnife">28%</span>
-                                    <span style="font-size:10px;color:var(--text-dim);">БЕЗОПАСНОСТЬ</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Автоматическое -->
-                <div class="sim-panel" data-panel="auto">
-                    <div class="sim-panel-grid">
-                        <div class="full">
-                            <div class="sim-group">
-                                <label>Автоматический режим — контроль очередей и подавление отдачи</label>
-                                <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;">
-                                    <label class="sim-check"><input type="checkbox" checked> <span class="ck-label">Очередь 3 выстрела</span></label>
-                                    <label class="sim-check"><input type="checkbox" checked> <span class="ck-label">Микропауза 0.5с</span></label>
-                                    <label class="sim-check"><input type="checkbox"> <span class="ck-label">Компенсация отдачи</span></label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="full">
-                            <div class="sim-group">
-                                <label>Гуманизация</label>
-                                <div class="sim-slider-row">
-                                    <span style="font-size:10px;color:var(--text-dim);">ТОЧНОСТЬ</span>
-                                    <input type="range" min="0" max="50" value="35" id="humanSliderAuto">
-                                    <span class="sval" id="humanValAuto">35%</span>
-                                    <span style="font-size:10px;color:var(--text-dim);">БЕЗОПАСНОСТЬ</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Пистолеты -->
-                <div class="sim-panel" data-panel="pistol">
-                    <div class="sim-panel-grid">
-                        <div class="full">
-                            <div class="sim-group">
-                                <label>Пистолеты — симулятор скорострельного кликера</label>
-                                <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;">
-                                    <label class="sim-check"><input type="checkbox" checked> <span class="ck-label">Скорострельный клик</span></label>
-                                    <label class="sim-check"><input type="checkbox"> <span class="ck-label">Смена оружия</span></label>
-                                    <label class="sim-check"><input type="checkbox" checked> <span class="ck-label">Случайная задержка</span></label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="full">
-                            <div class="sim-group">
-                                <label>Гуманизация</label>
-                                <div class="sim-slider-row">
-                                    <span style="font-size:10px;color:var(--text-dim);">ТОЧНОСТЬ</span>
-                                    <input type="range" min="0" max="50" value="22" id="humanSliderPistol">
-                                    <span class="sval" id="humanValPistol">22%</span>
-                                    <span style="font-size:10px;color:var(--text-dim);">БЕЗОПАСНОСТЬ</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Снайперские -->
-                <div class="sim-panel" data-panel="sniper">
-                    <div class="sim-panel-grid">
-                        <div class="full">
-                            <div class="sim-group">
-                                <label>Снайперские винтовки — синхронизация прицеливания и выстрела</label>
-                                <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;">
-                                    <label class="sim-check"><input type="checkbox" checked> <span class="ck-label">Прицеливание + выстрел</span></label>
-                                    <label class="sim-check"><input type="checkbox" checked> <span class="ck-label">Задержка 1.5с</span></label>
-                                    <label class="sim-check"><input type="checkbox"> <span class="ck-label">Смена оружия</span></label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="full">
-                            <div class="sim-group">
-                                <label>Гуманизация</label>
-                                <div class="sim-slider-row">
-                                    <span style="font-size:10px;color:var(--text-dim);">ТОЧНОСТЬ</span>
-                                    <input type="range" min="0" max="50" value="18" id="humanSliderSniper">
-                                    <span class="sval" id="humanValSniper">18%</span>
-                                    <span style="font-size:10px;color:var(--text-dim);">БЕЗОПАСНОСТЬ</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ЛОГ -->
-                <div class="sim-log-window" id="simLog">
-                    <div class="log-entry"><span class="ts">[12:45:07]</span> ⚡ <span class="hl">СИСТЕМА</span> — Инициализация драйверов SendInput / ViGEmBus</div>
-                    <div class="log-entry"><span class="ts">[12:45:09]</span> 🛡️ <span class="hl">ЗАЩИТА</span> — HWID верификация пройдена</div>
-                    <div class="log-entry"><span class="ts">[12:45:12]</span> 🔥 <span class="hl">РЕЖИМ</span> — Автоматическое (очередь 3 выстрела)</div>
-                    <div class="log-entry"><span class="ts">[12:45:14]</span> 🏃 <span class="hl">ДВИЖЕНИЕ</span> — Анти-кик (D → S → D)</div>
-                </div>
-            </div>
+        <h3 style="margin-top: 40px; margin-bottom: 10px; color: var(--text-muted); font-size: 16px;">БАЗА ВЫДАННЫХ КЛЮЧЕЙ</h3>
+        <div style="overflow-x: auto;">
+            <table class="keys-table">
+                <thead>
+                    <tr>
+                        <th>Лицензия</th>
+                        <th>HWID</th>
+                        <th>Пользователь</th>
+                        <th>Дата выдачи</th>
+                        <th>Срок действия</th>
+                        <th>Дата окончания</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="keys-tbody">
+                    <!-- Список ключей будет здесь -->
+                </tbody>
+            </table>
         </div>
-    </section>
+    </div>
+</div>
 
-    <!-- ============================================================
-    ОСОБЕННОСТИ
-    ============================================================ -->
-    <section class="features" id="features">
-        <div class="container">
-            <div style="text-align:center;margin-bottom:12px;">
-                <h2 style="font-size:clamp(26px,3.4vw,40px);font-weight:800;">⚡ Технические <span style="color:var(--neon-purple);">преимущества</span></h2>
-                <p style="color:var(--text-muted);font-size:17px;margin-top:6px;">Почему Autopilot v2.1 — выбор профессионалов</p>
-            </div>
+<script>
+    // --- АУДИО СИСТЕМА И ЭФФЕКТЫ ---
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-            <div class="features-grid">
-                <div class="feat-card">
-                    <div class="icon">🛡️</div>
-                    <h3>Обход античита</h3>
-                    <p>Низкоуровневая эмуляция C-структур <strong>SendInput</strong> и поддержка XInput / ViGEmBus для полной невидимости.</p>
-                </div>
-                <div class="feat-card">
-                    <div class="icon">⚙️</div>
-                    <h3>HWID Защита</h3>
-                    <p>Привязка к уникальному железу ПК по серийному номеру материнской платы с безопасной верификацией ключей.</p>
-                </div>
-                <div class="feat-card">
-                    <div class="icon">📈</div>
-                    <h3>Движок гуманизации</h3>
-                    <p>Случайные микрозадержки и отклонения (0–50%) делают стрельбу неотличимой от человеческой.</p>
-                </div>
-                <div class="feat-card">
-                    <div class="icon">🌀</div>
-                    <h3>VIP Сборка</h3>
-                    <p>Мультишаговые макросы, автоматизация снаряжения, управление движением и смещение прицела с точностью до пикселя.</p>
-                </div>
-                <div class="feat-card">
-                    <div class="icon">📊</div>
-                    <h3>Логи в реальном времени</h3>
-                    <p>Прозрачный контроль всех действий: каждый шаг макроса отображается в окне «ЛОГ ДЕЙСТВИЙ».</p>
-                </div>
-                <div class="feat-card">
-                    <div class="icon">🔐</div>
-                    <h3>Безопасность данных</h3>
-                    <p>Шифрование лицензионных ключей в реестре Windows с солевым хешированием и подписью.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    function playSound(freq, type, dur, vol) {
+        if(audioCtx.state === 'suspended') return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + dur);
+    }
 
-    <!-- ============================================================
-    ЦЕНЫ
-    ============================================================ -->
-    <section class="pricing" id="pricing">
-        <div class="container">
-            <div style="text-align:center;margin-bottom:12px;">
-                <h2 style="font-size:clamp(26px,3.4vw,40px);font-weight:800;">💰 Тарифы и <span style="color:var(--neon-gold);">активация</span></h2>
-                <p style="color:var(--text-muted);font-size:17px;margin-top:6px;">Выберите подходящий вариант и получите доступ мгновенно</p>
-            </div>
+    // Звуки для кнопок
+    document.querySelectorAll('.sound-btn').forEach(btn => {
+        btn.addEventListener('mouseenter', () => playSound(400, 'sine', 0.1, 0.05));
+        btn.addEventListener('click', () => playSound(200, 'square', 0.2, 0.1));
+    });
 
-            <div class="pricing-grid">
-                <!-- Стандарт -->
-                <div class="price-card">
-                    <div class="name">Стандарт</div>
-                    <div class="price">1 490 ₽ <small>/ 30 дн</small></div>
-                    <div class="desc">Базовый доступ ко всем режимам</div>
-                    <ul>
-                        <li>Все 4 режима оружия</li>
-                        <li>Гуманизация 0–50%</li>
-                        <li>Анти-AFK (L-Ctrl+Space)</li>
-                        <li>Автоматизация снаряжения</li>
-                        <li>Поддержка в Telegram</li>
-                    </ul>
-                    <a href="https://t.me/WZ_Casper" target="_blank" class="btn btn-outline" style="width:100%;justify-content:center;">Купить</a>
-                </div>
+    // Звуки и 3D для карточек
+    document.querySelectorAll('.feature-card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            playSound(600, 'sine', 0.1, 0.02);
+        });
 
-                <!-- VIP -->
-                <div class="price-card popular">
-                    <div class="name">VIP Сборка</div>
-                    <div class="price">2 990 ₽ <small>/ 30 дн</small></div>
-                    <div class="desc">Всё, что в Стандарте + эксклюзивные фичи</div>
-                    <ul>
-                        <li>🌀 Мультишаговые VIP-макросы</li>
-                        <li>⚡ Сдвиг прицела 4 направления</li>
-                        <li>🎯 Расширенные настройки движений</li>
-                        <li>📊 Детальные логи с цветовой индикацией</li>
-                        <li>🛡️ Приоритетная поддержка 24/7</li>
-                    </ul>
-                    <a href="https://t.me/WZ_Casper" target="_blank" class="btn btn-primary" style="width:100%;justify-content:center;">Выбрать VIP</a>
-                </div>
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const xc = rect.width / 2;
+            const yc = rect.height / 2;
+            const dx = x - xc;
+            const dy = y - yc;
+            card.style.transform = `rotateY(${dx/10}deg) rotateX(${-dy/10}deg) translateZ(10px)`;
+        });
 
-                <!-- Навсегда -->
-                <div class="price-card">
-                    <div class="name">Навсегда</div>
-                    <div class="price">6 990 ₽ <small>/ бессрочно</small></div>
-                    <div class="desc">Вечный доступ ко всем обновлениям</div>
-                    <ul>
-                        <li>Все функции VIP + Стандарт</li>
-                        <li>Бессрочная лицензия</li>
-                        <li>Все будущие обновления бесплатно</li>
-                        <li>Эксклюзивный бета-доступ</li>
-                        <li>Персональный менеджер</li>
-                    </ul>
-                    <a href="https://t.me/WZ_Casper" target="_blank" class="btn btn-green" style="width:100%;justify-content:center;">Купить навсегда</a>
-                </div>
-            </div>
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = `rotateY(0deg) rotateX(0deg) translateZ(0px)`;
+        });
+    });
 
-            <div style="text-align:center;margin-top:32px;color:var(--text-dim);font-size:14px;">
-                🔑 Ключи активации выдаются мгновенно в Telegram после оплаты.<br>
-                По всем вопросам — <a href="https://t.me/WZ_Casper" style="color:var(--neon-blue);font-weight:600;">@WZ_Casper</a>
-            </div>
-        </div>
-    </section>
+    // Активация аудио при первом клике
+    window.addEventListener('click', () => {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }, {once: true});
 
-    <!-- ============================================================
-    ПОДВАЛ
-    ============================================================ -->
-    <footer class="footer">
-        <div class="container">
-            <div class="links">
-                <a href="https://github.com/WZCasper/autopilot-site" target="_blank">GitHub</a>
-                <a href="https://t.me/WZ_Casper" target="_blank">Telegram</a>
-                <a href="https://youtu.be/R_MGIDQ9s80" target="_blank">YouTube</a>
-                <a href="#hero">Наверх ⬆</a>
-            </div>
-            <p>
-                © 2026 <strong>CASPER</strong> · Autopilot v2.1 Anti-Ricochet<br>
-                <span style="font-size:12px;color:var(--text-dim);">Разработано с ⚡ для профессиональной игры</span>
-            </p>
-        </div>
-    </footer>
 
-    <!-- ============================================================
-    THREE.JS — ФОН
-    ============================================================ -->
-    <script>
-        (function initThree() {
-            const canvas = document.getElementById('three-canvas');
-            if (!canvas) return;
+    // --- СИСТЕМА ГЕНЕРАЦИИ КЛЮЧЕЙ С ОТЛОЖЕННЫМ СТАРТОМ ---
+    // Зашифрованный пароль '17d99211@'
+    const _0xAdminPass = [49, 55, 100, 57, 57, 50, 49, 49, 64];
 
-            const scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x0F0F0F);
+    const adminIcon = document.getElementById('admin-icon');
+    const adminModal = document.getElementById('admin-modal');
+    const closeAdmin = document.getElementById('close-admin');
+    const generateBtn = document.getElementById('generate-key-btn');
+    const keysTbody = document.getElementById('keys-tbody');
 
-            const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 40;
+    // Открытие панели
+    adminIcon.addEventListener('click', () => {
+        let input = prompt("Enter Neural Core Override Password:");
+        if (!input) return;
+        
+        let isAuth = input.length === _0xAdminPass.length && input.split('').every((char, i) => char.charCodeAt(0) === _0xAdminPass[i]);
+        
+        if (isAuth) {
+            adminModal.style.display = 'flex';
+            renderKeys();
+        } else {
+            alert("ACCESS DENIED");
+        }
+    });
 
-            const renderer = new THREE.WebGLRenderer({
-                canvas,
-                alpha: true,
-                antialias: true,
-            });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // Закрытие панели
+    closeAdmin.addEventListener('click', () => {
+        adminModal.style.display = 'none';
+    });
 
-            // Частицы
-            const count = 220;
-            const positions = new Float32Array(count * 3);
-            const colors = new Float32Array(count * 3);
-            const sizes = new Float32Array(count);
+    // Генерация случайного формата ключа (ANC-XXXX-XXXX-XXXX)
+    function generateRandomKey() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let key = 'ANC';
+        for(let j=0; j<3; j++) {
+            key += '-';
+            for(let i=0; i<4; i++) key += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return key;
+    }
 
-            const palette = [
-                new THREE.Color(0x8e44ad),
-                new THREE.Color(0x2ecc71),
-                new THREE.Color(0xf1c40f),
-                new THREE.Color(0xe74c3c),
-                new THREE.Color(0x0081cc),
-            ];
+    // Форматирование даты выдачи
+    function formatDate(date) {
+        return date.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
 
-            for (let i = 0; i < count; i++) {
-                positions[i * 3] = (Math.random() - 0.5) * 80;
-                positions[i * 3 + 1] = (Math.random() - 0.5) * 60;
-                positions[i * 3 + 2] = (Math.random() - 0.5) * 40 - 10;
+    // Создание нового ключа
+    generateBtn.addEventListener('click', () => {
+        const hwid = document.getElementById('hwid-input').value.trim();
+        const name = document.getElementById('name-input').value.trim();
+        const durationDays = parseInt(document.getElementById('duration-input').value);
 
-                const c = palette[Math.floor(Math.random() * palette.length)];
-                colors[i * 3] = c.r;
-                colors[i * 3 + 1] = c.g;
-                colors[i * 3 + 2] = c.b;
+        if (!hwid || !name) {
+            alert("Пожалуйста, заполните HWID и Имя пользователя.");
+            return;
+        }
 
-                sizes[i] = 0.15 + Math.random() * 0.55;
+        const now = new Date();
+
+        const newKey = {
+            key: generateRandomKey(),
+            hwid: hwid,
+            name: name,
+            created: formatDate(now),
+            duration: durationDays,
+            timestamp: now.getTime()
+        };
+
+        // Сохранение в Local Storage браузера
+        let keys = JSON.parse(localStorage.getItem('autopilot_keys') || '[]');
+        keys.unshift(newKey);
+        localStorage.setItem('autopilot_keys', JSON.stringify(keys));
+
+        document.getElementById('hwid-input').value = '';
+        document.getElementById('name-input').value = '';
+        renderKeys();
+    });
+
+    // Отрисовка таблицы
+    function renderKeys() {
+        let keys = JSON.parse(localStorage.getItem('autopilot_keys') || '[]');
+        keysTbody.innerHTML = '';
+
+        keys.forEach((k) => {
+            const tr = document.createElement('tr');
+            let durationText = k.duration === 999 ? "Навсегда" : `${k.duration} дн.`;
+            
+            // Расчет даты и времени окончания ключа
+            let expireText = "—";
+            if (k.duration === 999) {
+                expireText = "Бессрочно";
+            } else if (k.timestamp) {
+                const expDate = new Date(k.timestamp + k.duration * 24 * 60 * 60 * 1000);
+                expireText = formatDate(expDate);
             }
 
-            const geometry = new THREE.BufferGeometry();
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+            tr.innerHTML = `
+                <td style="color: var(--accent-green); font-family: monospace; font-weight: bold;">${k.key}</td>
+                <td style="font-family: monospace; color: #aaa;">${k.hwid}</td>
+                <td>${k.name}</td>
+                <td style="color: var(--text-muted);">${k.created}</td>
+                <td style="color: var(--accent-blue); font-weight: bold;">${durationText}</td>
+                <td style="color: #f39c12; font-weight: bold;">${expireText}</td>
+                <td>
+                    <button class="action-btn btn-copy" onclick="copyKey('${k.key}')">Копия</button>
+                    <button class="action-btn btn-edit" onclick="editKeyDuration('${k.key}')">Изменить</button>
+                </td>
+            `;
+            keysTbody.appendChild(tr);
+        });
+    }
 
-            const material = new THREE.PointsMaterial({
-                size: 0.35,
-                vertexColors: true,
-                transparent: true,
-                opacity: 0.7,
-                blending: THREE.AdditiveBlending,
-                sizeAttenuation: true,
-            });
-
-            const particles = new THREE.Points(geometry, material);
-            scene.add(particles);
-
-            // Небольшое свечение в центре
-            const glowGeo = new THREE.SphereGeometry(1.8, 16, 16);
-            const glowMat = new THREE.MeshBasicMaterial({
-                color: 0x8e44ad,
-                transparent: true,
-                opacity: 0.07,
-            });
-            const glow = new THREE.Mesh(glowGeo, glowMat);
-            scene.add(glow);
-
-            // Анимация
-            let time = 0;
-
-            function animate() {
-                requestAnimationFrame(animate);
-                time += 0.002;
-
-                particles.rotation.x = Math.sin(time * 0.08) * 0.03;
-                particles.rotation.y = Math.sin(time * 0.05) * 0.04;
-
-                glow.position.x = Math.sin(time * 0.2) * 6;
-                glow.position.y = Math.cos(time * 0.25) * 4;
-
-                renderer.render(scene, camera);
+    // Функция изменения срока ключа
+    window.editKeyDuration = function(keyToEdit) {
+        let keys = JSON.parse(localStorage.getItem('autopilot_keys') || '[]');
+        let keyIndex = keys.findIndex(k => k.key === keyToEdit);
+        
+        if (keyIndex > -1) {
+            let currentDuration = keys[keyIndex].duration;
+            let newDuration = prompt(`Введите новое количество дней для ключа (999 для вечного):\nТекущее значение: ${currentDuration}`, currentDuration);
+            
+            if (newDuration !== null && newDuration.trim() !== "" && !isNaN(newDuration)) {
+                keys[keyIndex].duration = parseInt(newDuration);
+                localStorage.setItem('autopilot_keys', JSON.stringify(keys));
+                renderKeys();
+                alert('Срок действия ключа успешно обновлен!');
             }
+        }
+    };
 
-            animate();
+    // Функция копирования в буфер обмена
+    window.copyKey = function(key) {
+        navigator.clipboard.writeText(key).then(() => {
+            alert('Ключ скопирован: ' + key);
+        });
+    };
+</script>
 
-            // Ресайз
-            function resize() {
-                const w = window.innerWidth;
-                const h = window.innerHeight;
-                camera.aspect = w / h;
-                camera.updateProjectionMatrix();
-                renderer.setSize(w, h);
-            }
-            window.addEventListener('resize', resize);
-
-            // 3D tilt для превью
-            const frame = document.getElementById('appFrame');
-            const previewContainer = document.getElementById('appPreview3d');
-
-            if (frame && previewContainer) {
-                previewContainer.addEventListener('mousemove', (e) => {
-                    const rect = previewContainer.getBoundingClientRect();
-                    const x = (e.clientX - rect.left) / rect.width - 0.5;
-                    const y = (e.clientY - rect.top) / rect.height - 0.5;
-                    const rotX = 6 - y * 12;
-                    const rotY = -8 + x * 16;
-                    frame.style.transform =
-                        `rotateX(${rotX}deg) rotateY(${rotY}deg) rotateZ(2deg)`;
-                });
-
-                previewContainer.addEventListener('mouseleave', () => {
-                    frame.style.transform = 'rotateX(6deg) rotateY(-8deg) rotateZ(2deg)';
-                });
-            }
-        })();
-    </script>
-
-    <!-- ============================================================
-    СИМУЛЯТОР — ЛОГИКА
-    ============================================================ -->
-    <script>
-        (function simLogic() {
-            // ---------- Вкладки ----------
-            const tabBtns = document.querySelectorAll('.st-btn');
-            const panels = {
-                vip: document.querySelector('[data-panel="vip"]'),
-                knife: document.querySelector('[data-panel="knife"]'),
-                auto: document.querySelector('[data-panel="auto"]'),
-                pistol: document.querySelector('[data-panel="pistol"]'),
-                sniper: document.querySelector('[data-panel="sniper"]'),
-            };
-
-            const modeNames = {
-                vip: '🌀 VIP',
-                knife: '🔪 Ножи',
-                auto: '🔥 Автоматическое',
-                pistol: '🔫 Пистолеты',
-                sniper: '🎯 Снайперские',
-            };
-
-            tabBtns.forEach((btn) => {
-                btn.addEventListener('click', () => {
-                    tabBtns.forEach((b) => b.classList.remove('active'));
-                    btn.classList.add('active');
-
-                    const tab = btn.dataset.tab;
-                    Object.keys(panels).forEach((key) => {
-                        panels[key].classList.toggle('active', key === tab);
-                    });
-
-                    // Лог переключения
-                    addLog(`🔄 <span class="hl">ВКЛАДКА</span> — ${modeNames[tab] || tab}`);
-                });
-            });
-
-            // ---------- Ползунки гуманизации ----------
-            const sliders = [
-                { id: 'humanSlider', valId: 'humanVal', label: 'VIP' },
-                { id: 'humanSliderKnife', valId: 'humanValKnife', label: 'Ножи' },
-                { id: 'humanSliderAuto', valId: 'humanValAuto', label: 'Автоматическое' },
-                { id: 'humanSliderPistol', valId: 'humanValPistol', label: 'Пистолеты' },
-                { id: 'humanSliderSniper', valId: 'humanValSniper', label: 'Снайперские' },
-            ];
-
-            sliders.forEach(({ id, valId, label }) => {
-                const slider = document.getElementById(id);
-                const valEl = document.getElementById(valId);
-                if (slider && valEl) {
-                    slider.addEventListener('input', () => {
-                        const v = parseInt(slider.value, 10);
-                        valEl.textContent = v + '%';
-                        addLog(`🎛️ <span class="hl">ГУМАНИЗАЦИЯ</span> — ${label} → ${v}%`);
-                    });
-                }
-            });
-
-            // ---------- Чекбоксы ----------
-            const checkboxes = document.querySelectorAll('.sim-check input[type="checkbox"]');
-            checkboxes.forEach((cb) => {
-                cb.addEventListener('change', () => {
-                    const label = cb.closest('.sim-check')?.querySelector('.ck-label')?.textContent?.trim() ||
-                        'Чекбокс';
-                    const state = cb.checked ? 'Вкл' : 'Выкл';
-                    addLog(`⚙️ <span class="hl">НАСТРОЙКА</span> — ${label} → ${state}`);
-                });
-            });
-
-            // ---------- Лог ----------
-            const logEl = document.getElementById('simLog');
-            let logCounter = 0;
-
-            function addLog(msg) {
-                if (!logEl) return;
-                const now = new Date();
-                const ts = now.toTimeString().slice(0, 8);
-                const entry = document.createElement('div');
-                entry.className = 'log-entry';
-                entry.innerHTML = `<span class="ts">[${ts}]</span> ${msg}`;
-                logEl.appendChild(entry);
-                logEl.scrollTop = logEl.scrollHeight;
-
-                // Ограничим количество записей
-                while (logEl.children.length > 80) {
-                    logEl.removeChild(logEl.firstChild);
-                }
-            }
-
-            // ---------- Автоматические логи для имитации работы ----------
-            const autoLogs = [
-                '⚡ <span class="hl">КНПП</span> — Активация',
-                '🏃 <span class="hl">ДВИЖЕНИЕ</span> (Анти-кик) — D → S → D',
-                '🔪 <span class="hl">НОЖ</span> — Быстрый клик ЛКМ',
-                '🎯 <span class="hl">СНАЙПЕР</span> — Выстрел (задержка 1.5с)',
-                '🛡️ <span class="hl">БРОНЯ</span> — Автоматическое восстановление (G)',
-                '🔥 <span class="hl">АВТОМАТ</span> — Очередь 3 выстрела + пауза',
-                '🌀 <span class="hl">VIP</span> — Запуск мультишагового макроса',
-                '🔫 <span class="hl">ПИСТОЛЕТ</span> — Скорострельный клик (3x)',
-                '📊 <span class="hl">ЛОГ</span> — Синхронизация с ядром',
-                '⚡ <span class="hl">СИСТЕМА</span> — SendInput эмуляция активна',
-            ];
-
-            let autoIndex = 0;
-
-            function pushAutoLog() {
-                const msg = autoLogs[autoIndex % autoLogs.length];
-                addLog(msg);
-                autoIndex++;
-            }
-
-            // Первые логи уже есть в HTML, дополняем
-            setTimeout(() => {
-                pushAutoLog();
-            }, 1200);
-            setTimeout(() => {
-                pushAutoLog();
-            }, 2800);
-            setTimeout(() => {
-                pushAutoLog();
-            }, 4200);
-
-            // Каждые 6-10 секунд новый лог
-            setInterval(() => {
-                pushAutoLog();
-            }, 6000 + Math.random() * 4000);
-
-            // ---------- Гамбургер ----------
-            const hamburger = document.getElementById('hamburger');
-            const navLinks = document.getElementById('navLinks');
-            if (hamburger && navLinks) {
-                hamburger.addEventListener('click', () => {
-                    navLinks.classList.toggle('open');
-                });
-                // Закрыть при клике на ссылку
-                navLinks.querySelectorAll('a').forEach((a) => {
-                    a.addEventListener('click', () => {
-                        navLinks.classList.remove('open');
-                    });
-                });
-            }
-
-            // ---------- Плавный скролл для якорных ссылок ----------
-            document.querySelectorAll('a[href^="#"]').forEach((a) => {
-                a.addEventListener('click', (e) => {
-                    const targetId = a.getAttribute('href');
-                    if (targetId === '#') return;
-                    const target = document.querySelector(targetId);
-                    if (target) {
-                        e.preventDefault();
-                        const offset = 80;
-                        const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
-                        window.scrollTo({ top, behavior: 'smooth' });
-                    }
-                });
-            });
-
-            console.log('🧪 Autopilot v2.1 — интерактивный симулятор загружен');
-        })();
-    </script>
 </body>
 </html>
