@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autopilot v2.1 | Anti-Ricochet Neural Core</title>
+    <title>Autopilot v2.1 | ZOMBIE BO6 & BO7 Neural Core</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -29,7 +29,6 @@
             line-height: 1.6;
         }
 
-        /* Фоновая сетка и свечение */
         body::before {
             content: '';
             position: fixed;
@@ -48,7 +47,6 @@
         ::-webkit-scrollbar-track { background: var(--bg-base); }
         ::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 4px; }
 
-        /* Навигация */
         header {
             position: fixed;
             top: 0; width: 100%;
@@ -56,7 +54,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(15, 15, 15, 0.8);
+            background: rgba(15, 15, 15, 0.9);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--glass-border);
             z-index: 1000;
@@ -108,17 +106,13 @@
         }
         .btn-outline:hover { background: rgba(255,255,255,0.05); border-color: var(--purple); }
 
-        /* Главный экран */
         .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 120px 5% 50px;
-            position: relative;
+            padding: 150px 5% 80px;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
         }
 
-        .hero-content { max-width: 600px; }
         .badge {
             display: inline-flex; align-items: center; gap: 8px;
             padding: 6px 12px;
@@ -129,6 +123,7 @@
             font-size: 12px; font-weight: 800;
             margin-bottom: 20px;
         }
+        
         .pulse-dot {
             width: 8px; height: 8px;
             background: var(--green);
@@ -138,158 +133,187 @@
         }
 
         .hero h1 {
-            font-size: 4rem; line-height: 1.1; font-weight: 900;
+            font-size: 3.5rem; line-height: 1.2; font-weight: 900;
             text-transform: uppercase; margin-bottom: 20px;
             background: linear-gradient(to right, #ffffff, #a0a0a0);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
+        
         .hero h1 span { color: var(--gold); -webkit-text-fill-color: var(--gold); }
-        .hero p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 40px; max-width: 500px; }
+        .hero p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 40px; }
 
-        .hero-actions { display: flex; gap: 15px; flex-wrap: wrap; }
+        .hero-actions { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
 
-        /* 3D Демонстрация приложения */
-        .scene {
-            perspective: 1500px;
-            width: 550px; height: 600px;
-            display: flex; justify-content: center; align-items: center;
+        /* Описание макросов */
+        .modes-section {
+            padding: 60px 5%;
+            background: #0a0a0a;
+            border-top: 1px solid #1a1a1a;
+            border-bottom: 1px solid #1a1a1a;
         }
-        .app-mockup {
-            width: 100%; height: 100%;
-            background: rgba(20, 20, 20, 0.85);
-            border: 1px solid rgba(142, 68, 173, 0.3);
-            border-radius: 12px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.02);
-            backdrop-filter: blur(20px);
-            transform: rotateX(15deg) rotateY(-20deg);
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease-out;
-            display: flex; flex-direction: column;
-            overflow: hidden;
-        }
-        .app-header {
-            padding: 15px; border-bottom: 1px solid #333;
-            display: flex; justify-content: space-between; align-items: center;
-            background: #111;
-        }
-        .app-header-title { font-size: 14px; font-weight: 800; color: var(--gold); letter-spacing: 1px; }
-        .app-body { padding: 20px; flex: 1; display: flex; flex-direction: column; gap: 15px; }
         
-        .mock-tab-bar { display: flex; gap: 5px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .mock-tab { padding: 5px 10px; font-size: 11px; color: #888; font-weight: bold; background: #1a1a1a; border-radius: 4px; }
-        .mock-tab.active { background: var(--purple); color: #fff; }
-        
-        .mock-module { background: #1a1a1a; padding: 15px; border-radius: 8px; border: 1px solid #2a2a2a; }
-        .mock-title { font-size: 10px; color: var(--green); margin-bottom: 10px; font-weight: bold; }
-        .mock-row { display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center; }
-        .mock-slider { flex: 1; height: 4px; background: #333; margin: 0 10px; position: relative; border-radius: 2px; }
-        .mock-slider::after { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 30%; background: var(--gold); border-radius: 2px; }
-
-        /* Интерактивный симулятор */
-        .simulator-section { padding: 100px 5%; background: #0a0a0a; border-top: 1px solid #1a1a1a; }
-        .section-header { text-align: center; margin-bottom: 60px; }
-        .section-header h2 { font-size: 2.5rem; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
-        
-        .sim-container {
-            max-width: 900px; margin: 0 auto;
-            display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            margin-bottom: 50px;
         }
 
-        .sim-panel {
+        .modes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .mode-card {
             background: var(--bg-card);
             border: 1px solid var(--glass-border);
+            padding: 30px;
             border-radius: 12px;
-            padding: 25px;
-            backdrop-filter: blur(10px);
+            transition: 0.3s;
         }
 
-        /* Tabs */
-        .tabs { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
-        .tab-btn {
-            padding: 8px 16px; background: #1A1A1A; border: 1px solid #333;
-            color: #888; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 12px;
-            transition: all 0.2s;
+        .mode-card:hover {
+            border-color: var(--purple);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(142,68,173,0.1);
         }
-        .tab-btn.active { background: var(--purple); color: #fff; border-color: var(--purple); box-shadow: 0 0 10px rgba(142,68,173,0.4); }
-        .tab-content { display: none; animation: fadeIn 0.3s; }
-        .tab-content.active { display: block; }
-
-        .control-group { margin-bottom: 20px; }
-        .control-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); font-weight: 800; margin-bottom: 8px; text-transform: uppercase; }
         
-        input[type=range] {
-            -webkit-appearance: none; width: 100%; background: transparent;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%;
-            background: var(--green); cursor: pointer; margin-top: -6px; box-shadow: 0 0 5px var(--green);
-        }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%; height: 4px; cursor: pointer; background: #333; border-radius: 2px;
+        .mode-card.vip {
+            border-color: var(--gold);
+            box-shadow: inset 0 0 20px rgba(241,196,15,0.05);
         }
 
-        .checkbox-wrapper { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; cursor: pointer; }
-        .checkbox-wrapper input { display: none; }
-        .custom-checkbox { width: 18px; height: 18px; border: 2px solid #555; border-radius: 4px; display: inline-flex; justify-content: center; align-items: center; transition: 0.2s; }
-        .checkbox-wrapper input:checked + .custom-checkbox { background: var(--gold); border-color: var(--gold); }
-        .checkbox-wrapper input:checked + .custom-checkbox::after { content: '✓'; color: #000; font-size: 12px; font-weight: bold; }
-        .check-label { font-size: 13px; font-weight: 600; color: #ccc; }
+        .mode-icon { font-size: 30px; margin-bottom: 15px; }
+        .mode-card h3 { color: #fff; font-size: 1.3rem; margin-bottom: 10px; text-transform: uppercase; }
+        .mode-card.vip h3 { color: var(--gold); }
+        .mode-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
+        
+        ul.mode-features {
+            list-style: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #222;
+        }
+        
+        ul.mode-features li {
+            color: #ccc;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        ul.mode-features li::before { content: '✓'; color: var(--green); font-weight: bold; }
 
-        /* Лог действий */
+        /* Секция Интерфейса и Лога */
+        .app-showcase-section {
+            padding: 80px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .app-container {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+        }
+
+        .screenshots-column {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .main-screenshot {
+            width: 100%;
+            border-radius: 12px;
+            border: 2px solid #333;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            background: #111;
+        }
+
+        .screenshot-gallery {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .screenshot-gallery img {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid #222;
+            cursor: pointer;
+            transition: 0.3s;
+            background: #111;
+        }
+        
+        .screenshot-gallery img:hover {
+            border-color: var(--gold);
+        }
+
+        .log-column {
+            flex: 0.8;
+            position: sticky;
+            top: 100px;
+        }
+
         .log-window {
             background: rgba(10, 10, 10, 0.95);
             border: 1px solid var(--purple);
             border-radius: 8px;
-            height: 400px;
+            height: 600px;
             font-family: 'JetBrains Mono', monospace;
             padding: 15px;
             overflow-y: hidden;
-            position: relative;
             box-shadow: inset 0 0 30px rgba(142,68,173,0.1);
         }
-        .log-header { font-size: 12px; color: var(--purple); border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 10px; font-weight: bold; display: flex; justify-content: space-between; }
-        .log-content { display: flex; flex-direction: column; gap: 6px; height: 100%; }
-        .log-entry { font-size: 11px; opacity: 0; transform: translateX(-10px); animation: slideInLog 0.3s forwards; padding: 4px 8px; border-radius: 4px; border-left: 2px solid transparent; }
+
+        .log-header { 
+            font-size: 12px; 
+            color: var(--purple); 
+            border-bottom: 1px solid #333; 
+            padding-bottom: 10px; 
+            margin-bottom: 10px; 
+            font-weight: bold; 
+            display: flex; 
+            justify-content: space-between; 
+        }
+
+        .log-content { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 6px; 
+            height: calc(100% - 30px); 
+        }
+
+        .log-entry { 
+            font-size: 11px; 
+            opacity: 0; 
+            transform: translateX(-10px); 
+            animation: slideInLog 0.3s forwards; 
+            padding: 6px 10px; 
+            border-radius: 4px; 
+            border-left: 2px solid transparent; 
+        }
+        
         .log-sys { color: var(--gold); background: rgba(241,196,15,0.05); border-left-color: var(--gold); }
         .log-act { color: var(--green); background: rgba(46,204,113,0.05); border-left-color: var(--green); }
         .log-err { color: var(--red); background: rgba(231,76,60,0.05); border-left-color: var(--red); }
 
-        /* Преимущества */
-        .features { padding: 100px 5%; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .feature-card {
-            background: var(--bg-card); padding: 40px 30px; border-radius: 12px; border: 1px solid var(--glass-border);
-            text-align: center; transition: 0.3s;
-        }
-        .feature-card:hover { border-color: var(--gold); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(241,196,15,0.1); }
-        .feature-icon { font-size: 40px; margin-bottom: 20px; }
-        .feature-card h3 { color: var(--gold); margin-bottom: 15px; font-size: 1.2rem; text-transform: uppercase; }
-        .feature-card p { color: var(--text-muted); font-size: 0.95rem; }
-
-        /* Тарифы */
-        .pricing { padding: 80px 5%; background: #0a0a0a; text-align: center; border-top: 1px solid #1a1a1a; }
-        .pricing-cards { display: flex; justify-content: center; gap: 30px; margin-top: 50px; flex-wrap: wrap; }
-        .price-card { background: var(--bg-card); padding: 40px; border-radius: 12px; border: 1px solid var(--glass-border); width: 320px; position: relative; }
-        .price-card.vip { border-color: var(--gold); box-shadow: 0 0 30px rgba(241,196,15,0.1); transform: scale(1.05); }
-        .price-card h3 { font-size: 1.5rem; margin-bottom: 15px; text-transform: uppercase; }
-        .price-card .price { font-size: 2.5rem; font-weight: 900; margin-bottom: 20px; color: var(--text-main); }
-        .price-list { list-style: none; margin-bottom: 30px; text-align: left; }
-        .price-list li { margin-bottom: 12px; font-size: 14px; color: #ccc; display: flex; align-items: center; gap: 10px; }
-        .price-list li::before { content: '✓'; color: var(--green); font-weight: bold; }
-
         footer { text-align: center; padding: 40px; background: #050505; border-top: 1px solid #111; font-size: 12px; color: #666; }
         
         @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.3); } 100% { opacity: 1; transform: scale(1); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideInLog { to { opacity: 1; transform: translateX(0); } }
 
-        @media (max-width: 900px) {
-            .hero { flex-direction: column; text-align: center; padding-top: 150px; }
-            .hero-actions { justify-content: center; }
-            .scene { width: 100%; height: 400px; margin-top: 50px; perspective: none; }
-            .app-mockup { transform: none !important; }
-            .sim-container { grid-template-columns: 1fr; }
-            .pricing-cards { flex-direction: column; align-items: center; }
-            .price-card.vip { transform: none; }
+        @media (max-width: 1024px) {
+            .app-container { flex-direction: column; }
+            .log-column { width: 100%; position: static; }
+            .log-window { height: 400px; }
         }
     </style>
 </head>
@@ -298,181 +322,123 @@
     <header>
         <div class="logo">⚡ AUTOPILOT <span>v2.1</span></div>
         <nav class="nav-links">
-            <a href="#features">Возможности</a>
-            <a href="#simulator">Интерфейс</a>
-            <a href="#pricing">Цены</a>
+            <a href="#modes">Режимы</a>
+            <a href="#interface">Интерфейс и Лог</a>
         </nav>
-        <a href="#pricing" class="btn btn-gold">КУПИТЬ ДОСТУП</a>
+        <a href="https://github.com/WZCasper/autopilot-site/releases/download/v2.1/Autopilot-v2.1.exe" class="btn btn-gold">СКАЧАТЬ v2.1</a>
     </header>
 
     <section class="hero">
-        <div class="hero-content">
-            <div class="badge"><div class="pulse-dot"></div> АНТИ-РИКОШЕТ АКТИВЕН</div>
-            <h1>Абсолютное доминирование в <span>Warzone</span></h1>
-            <p>Профессиональный софт для игровой автоматизации с низкоуровневым обходом античита. Идеальные тайминги, многошаговые макросы и умная гуманизация для Verdansk и Avalon.</p>
-            <div class="hero-actions">
-                <a href="https://t.me/WZ_Casper" target="_blank" class="btn btn-gold">ТЕЛЕГРАМ ЧАТ 💬</a>
-                <a href="https://youtu.be/R_MGIDQ9s80" target="_blank" class="btn btn-outline">ИНСТРУКЦИЯ 📺</a>
-            </div>
-        </div>
-
-        <div class="scene" id="scene">
-            <div class="app-mockup" id="mockup">
-                <div class="app-header">
-                    <span class="app-header-title">AUTOPILOT NEURAL CORE [4WK]</span>
-                    <span style="color:#666; font-size: 12px;">_ □ X</span>
-                </div>
-                <div class="app-body">
-                    <div class="mock-tab-bar">
-                        <div class="mock-tab active">🌀 VIP Сборка</div>
-                        <div class="mock-tab">🔪 Ножи</div>
-                        <div class="mock-tab">🔥 Автомат</div>
-                    </div>
-                    <div class="mock-module">
-                        <div class="mock-title">ПОСЛЕДОВАТЕЛЬНОСТЬ РЕЖИМОВ:</div>
-                        <div class="mock-row"><span style="color:#aaa; font-size:10px;">1. Снайперка</span> <span style="color:#f39c12; font-size:10px; border:1px solid #333; padding:2px 8px; border-radius:3px;">V</span></div>
-                        <div class="mock-row"><span style="color:#aaa; font-size:10px;">2. Дробовик</span> <span style="color:#f39c12; font-size:10px; border:1px solid #333; padding:2px 8px; border-radius:3px;">Q</span></div>
-                    </div>
-                    <div class="mock-module">
-                        <div class="mock-title">ГУМАНИЗАЦИЯ:</div>
-                        <div class="mock-row">
-                            <span style="font-size:8px; color:#555;">ТОЧНОСТЬ</span>
-                            <div class="mock-slider"></div>
-                            <span style="font-size:8px; color:var(--green);">БЕЗОПАСНОСТЬ</span>
-                        </div>
-                    </div>
-                    <div style="margin-top:auto; font-size:10px; color:#555; text-align:center;">STATUS: HOOKED (SendInput)</div>
-                </div>
-            </div>
+        <div class="badge"><div class="pulse-dot"></div> АНТИ-РИКОШЕТ АКТИВЕН</div>
+        <h1>Абсолютное доминирование в <span>ZOMBIE BO6 & BO7</span></h1>
+        <p>Профессиональный софт для игровой автоматизации с низкоуровневым обходом античита (SendInput / XInput). Идеальные тайминги, многошаговые макросы и умная гуманизация для Зомби режима.</p>
+        <div class="hero-actions">
+            <a href="https://github.com/WZCasper/autopilot-site/releases/download/v2.1/Autopilot-v2.1.exe" class="btn btn-gold">СКАЧАТЬ ПРОГРАММУ 📥</a>
+            <a href="https://t.me/WZ_Casper" target="_blank" class="btn btn-outline">ТЕЛЕГРАМ ЧАТ 💬</a>
         </div>
     </section>
 
-    <section class="features" id="features">
-        <div class="feature-card">
-            <div class="feature-icon">🛡️</div>
-            <h3>Обход античита</h3>
-            <p>Низкоуровневая эмуляция C-структур SendInput и поддержка драйверов геймпадов XInput/ViGEmBus. Нулевой риск обнаружения.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">⚙️</div>
-            <h3>HWID Защита</h3>
-            <p>Привязка лицензии к уникальному железу ПК с безопасным шифрованием ключей в реестре материнской платы.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">📈</div>
-            <h3>Движок гуманизации</h3>
-            <p>Случайные микрозадержки (jitter) и смещения прицела для предотвращения поведенческих триггеров защиты игры.</p>
-        </div>
-    </section>
-
-    <section class="simulator-section" id="simulator">
-        <div class="section-header">
-            <h2>Интерактивная консоль</h2>
-            <p style="color: var(--text-muted);">Протестируйте логику интерфейса Autopilot v2.1 прямо в браузере</p>
-        </div>
-
-        <div class="sim-container">
-            <!-- Панель управления -->
-            <div class="sim-panel">
-                <div class="tabs">
-                    <button class="tab-btn active" onclick="switchTab('vip')">🌀 VIP Сборка</button>
-                    <button class="tab-btn" onclick="switchTab('knife')">🔪 Ножи</button>
-                    <button class="tab-btn" onclick="switchTab('auto')">🔥 Автомат</button>
-                </div>
-
-                <div id="tab-vip" class="tab-content active">
-                    <div class="control-group">
-                        <div class="control-label">
-                            <span>Уровень гуманизации</span>
-                            <span id="hum-val" style="color: var(--gold);">10%</span>
-                        </div>
-                        <input type="range" min="0" max="50" value="10" oninput="updateHum(this.value)">
-                    </div>
-
-                    <div class="control-group">
-                        <label class="checkbox-wrapper">
-                            <input type="checkbox" checked onchange="logAction('sys', '🛡️ Анти-AFK (L-CTRL + Space) ' + (this.checked ? 'ВКЛЮЧЕН' : 'ОТКЛЮЧЕН'))">
-                            <span class="custom-checkbox"></span>
-                            <span class="check-label">Анти-AFK (Защита от кика)</span>
-                        </label>
-                        <label class="checkbox-wrapper">
-                            <input type="checkbox" checked onchange="logAction('act', '⚙️ Авто-броня ' + (this.checked ? 'АКТИВИРОВАНА' : 'ОТКЛЮЧЕНА'))">
-                            <span class="custom-checkbox"></span>
-                            <span class="check-label">Авто-броня (Интервал 15 сек)</span>
-                        </label>
-                    </div>
-
-                    <div class="control-group" style="background: #111; padding: 15px; border-radius: 8px; border: 1px solid #222;">
-                        <div class="control-label" style="color: var(--green);">Сдвиг прицела (Anti-Recoil)</div>
-                        <div style="display: flex; gap: 10px; margin-top:10px;">
-                            <button class="btn btn-outline" style="padding: 5px 10px; font-size:11px;" onclick="logAction('act', '🎯 Калибровка: Вверх (Y-) +10px')">Вверх (Y-)</button>
-                            <button class="btn btn-outline" style="padding: 5px 10px; font-size:11px;" onclick="logAction('act', '🎯 Калибровка: Вниз (Y+) +10px')">Вниз (Y+)</button>
-                        </div>
-                    </div>
-                    
-                    <button class="btn btn-gold" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="simulateMacro()">ТЕСТ: ЗАПУСК МАКРОСА</button>
-                </div>
-
-                <div id="tab-knife" class="tab-content">
-                    <p style="font-size: 12px; color: #aaa; margin-bottom: 20px;">Высокоскоростные круговые макросы ближнего боя с умной синхронизацией задержек.</p>
-                    <label class="checkbox-wrapper">
-                        <input type="checkbox" onchange="logAction('sys', '🔪 Режим кругового ножа ' + (this.checked ? 'АКТИВЕН' : 'ОТКЛЮЧЕН'))">
-                        <span class="custom-checkbox"></span>
-                        <span class="check-label">Быстрый клик ЛКМ (Задержка 12мс)</span>
-                    </label>
-                </div>
-
-                <div id="tab-auto" class="tab-content">
-                    <p style="font-size: 12px; color: #aaa; margin-bottom: 20px;">Контроль стрельбы очередями и подавление отдачи с микропаузами.</p>
-                    <button class="btn btn-outline" style="width: 100%; justify-content: center;" onclick="logAction('act', '🔥 Очередь ЛКМ: Подавление отдачи активно')">ТЕСТ ОТДАЧИ</button>
-                </div>
-            </div>
-
-            <!-- Лог действий -->
-            <div class="log-window">
-                <div class="log-header">
-                    <span>ЛОГ ДЕЙСТВИЙ В РЕАЛЬНОМ ВРЕМЕНИ</span>
-                    <span style="color: var(--green);">● СЕТЬ АКТИВНА</span>
-                </div>
-                <div class="log-content" id="log-output">
-                    <!-- Логи добавляются через JS -->
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="pricing" id="pricing">
-        <h2 style="font-size: 2.5rem; text-transform: uppercase; color: var(--gold);">ТАРИФЫ</h2>
-        <div class="pricing-cards">
-            <div class="price-card">
-                <h3 style="color: #ccc;">Стандарт</h3>
-                <div class="price">$15 <span style="font-size: 1rem; color: #666;">/ мес</span></div>
-                <ul class="price-list">
-                    <li>Базовые макросы (Ножи/Авто)</li>
-                    <li>Обход античита SendInput</li>
-                    <li>Стандартная поддержка</li>
+    <!-- ОПИСАНИЕ РЕЖИМОВ МАКРОСОВ -->
+    <section class="modes-section" id="modes">
+        <h2 class="section-title">РЕЖИМЫ РАБОТЫ</h2>
+        <div class="modes-grid">
+            
+            <div class="mode-card vip">
+                <div class="mode-icon">🌀</div>
+                <h3>VIP СБОРКА</h3>
+                <p>Продвинутый режим с возможностью настройки собственной последовательности (Нож -> Автомат -> Снайперка и т.д.).</p>
+                <ul class="mode-features">
+                    <li>Кастомная привязка клавиш переключения</li>
+                    <li>Полная настройка уровня гуманизации (Jitter)</li>
+                    <li>Модуль Анти-AFK (Защита от кика)</li>
+                    <li>Сдвиг прицела и авто-экипировка брони</li>
                 </ul>
-                <a href="https://t.me/WZ_Casper" target="_blank" class="btn btn-outline" style="width:100%; justify-content:center;">КУПИТЬ В TELEGRAM</a>
+            </div>
+
+            <div class="mode-card">
+                <div class="mode-icon">🔪</div>
+                <h3>НОЖИ</h3>
+                <p>Режим высокоскоростного ближнего боя с оптимизированными задержками для мгновенных атак.</p>
+                <ul class="mode-features">
+                    <li>Круговой макрос ближнего боя</li>
+                    <li>Автоматическое прерывание анимаций</li>
+                    <li>Синхронизация задержек до 1 мс</li>
+                </ul>
+            </div>
+
+            <div class="mode-card">
+                <div class="mode-icon">🔥</div>
+                <h3>АВТОМАТЫ</h3>
+                <p>Полный контроль автоматического огня. Подавление отдачи и настройка спрея.</p>
+                <ul class="mode-features">
+                    <li>Автоматический сдвиг прицела (Anti-Recoil)</li>
+                    <li>Стрельба очередями с микропаузами</li>
+                    <li>Моментальная остановка по отпусканию ЛКМ</li>
+                </ul>
+            </div>
+
+            <div class="mode-card">
+                <div class="mode-icon">🔫</div>
+                <h3>ПИСТОЛЕТЫ</h3>
+                <p>Превращает любое полуавтоматическое оружие в полностью автоматическое.</p>
+                <ul class="mode-features">
+                    <li>Максимально возможная скорострельность</li>
+                    <li>Регулируемая задержка между выстрелами</li>
+                    <li>Защита от залипания триггера</li>
+                </ul>
+            </div>
+
+            <div class="mode-card">
+                <div class="mode-icon">🎯</div>
+                <h3>СНАЙПЕРСКИЕ</h3>
+                <p>Идеально выверенные тайминги для Quickscope и автоматического задержки дыхания.</p>
+                <ul class="mode-features">
+                    <li>Авто-фокус перед выстрелом</li>
+                    <li>Мгновенный сброс прицела</li>
+                    <li>Умный расчет задержек (ADS timing)</li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ИНТЕРФЕЙС И ЛОГ -->
+    <section class="app-showcase-section" id="interface">
+        <h2 class="section-title">ИНТЕРФЕЙС И МОНИТОРИНГ</h2>
+        <div class="app-container">
+            
+            <!-- Колонка со скринами -->
+            <div class="screenshots-column">
+                <!-- Главный скриншот программы -->
+                <img src="image_648653.png" alt="Autopilot Interface Main" class="main-screenshot" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'800\' height=\'500\'><rect width=\'100%\' height=\'100%\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' fill=\'%23444\' font-family=\'sans-serif\' font-size=\'20\' text-anchor=\'middle\'>image_648653.png</text></svg>'">
+                
+                <!-- Галерея дополнительных скринов -->
+                <div class="screenshot-gallery">
+                    <img src="image_643387.png" alt="Screenshot 1" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'150\'><rect width=\'100%\' height=\'100%\' fill=\'%231a1a1a\'/><text x=\'50%\' y=\'50%\' fill=\'%23444\' font-family=\'sans-serif\' font-size=\'12\' text-anchor=\'middle\'>image_643387.png</text></svg>'">
+                    <img src="image_643078.png" alt="Screenshot 2" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'150\'><rect width=\'100%\' height=\'100%\' fill=\'%231a1a1a\'/><text x=\'50%\' y=\'50%\' fill=\'%23444\' font-family=\'sans-serif\' font-size=\'12\' text-anchor=\'middle\'>image_643078.png</text></svg>'">
+                    <img src="image_642ffb.png" alt="Screenshot 3" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'150\'><rect width=\'100%\' height=\'100%\' fill=\'%231a1a1a\'/><text x=\'50%\' y=\'50%\' fill=\'%23444\' font-family=\'sans-serif\' font-size=\'12\' text-anchor=\'middle\'>image_642ffb.png</text></svg>'">
+                    <img src="image_642cbd.png" alt="Screenshot 4" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'150\'><rect width=\'100%\' height=\'100%\' fill=\'%231a1a1a\'/><text x=\'50%\' y=\'50%\' fill=\'%23444\' font-family=\'sans-serif\' font-size=\'12\' text-anchor=\'middle\'>image_642cbd.png</text></svg>'">
+                </div>
+            </div>
+
+            <!-- Колонка с логом -->
+            <div class="log-column">
+                <div class="log-window">
+                    <div class="log-header">
+                        <span>ЛОГ ДЕЙСТВИЙ В РЕАЛЬНОМ ВРЕМЕНИ</span>
+                        <span style="color: var(--green);">● СЕТЬ АКТИВНА</span>
+                    </div>
+                    <div class="log-content" id="log-output">
+                        <!-- Логи генерируются через JS -->
+                    </div>
+                </div>
             </div>
             
-            <div class="price-card vip">
-                <div style="position:absolute; top:-15px; left:50%; transform:translateX(-50%); background:var(--gold); color:#000; padding:5px 15px; border-radius:20px; font-size:11px; font-weight:bold; letter-spacing:1px;">ПОПУЛЯРНЫЙ</div>
-                <h3 style="color: var(--gold);">VIP СБОРКА</h3>
-                <div class="price" style="color: var(--gold);">$30 <span style="font-size: 1rem; color: #666;">/ мес</span></div>
-                <ul class="price-list">
-                    <li>Все возможности Стандарта</li>
-                    <li>XInput / ViGEmBus эмуляция</li>
-                    <li>Настраиваемый Humanizer (Jitter)</li>
-                    <li>Модуль Анти-AFK</li>
-                    <li>Приоритетная HWID привязка</li>
-                </ul>
-                <a href="https://t.me/WZ_Casper" target="_blank" class="btn btn-gold" style="width:100%; justify-content:center;">АВТО-ВЫДАЧА КЛЮЧА 🤖</a>
-            </div>
         </div>
     </section>
 
     <footer>
-        <p>© 2026 CASPER | v2.1 Anti-Ricochet Neural Core | 4WK</p>
+        <p>© 2026 CASPER | v2.1 ZOMBIE Anti-Ricochet Neural Core | 4WK</p>
         <p style="margin-top: 10px; display:flex; justify-content:center; gap:15px;">
             <a href="https://github.com/WZCasper/autopilot-site" target="_blank" style="color:#666; text-decoration:none;">GitHub</a>
             <a href="https://t.me/WZ_Casper" target="_blank" style="color:#666; text-decoration:none;">Telegram Support</a>
@@ -480,83 +446,45 @@
     </footer>
 
     <script>
-        // 3D Tilt эффект для мокапа программы
-        const scene = document.getElementById('scene');
-        const mockup = document.getElementById('mockup');
-
-        scene.addEventListener('mousemove', (e) => {
-            if (window.innerWidth < 900) return; // Отключаем на мобильных
-            const rect = scene.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            
-            const rotateX = ((y - centerY) / centerY) * -10;
-            const rotateY = ((x - centerX) / centerX) * 15;
-            
-            mockup.style.transform = `rotateX(${15 + rotateX}deg) rotateY(${-20 + rotateY}deg)`;
-        });
-
-        scene.addEventListener('mouseleave', () => {
-            if (window.innerWidth < 900) return;
-            mockup.style.transform = 'rotateX(15deg) rotateY(-20deg)';
-        });
-
-        // Переключение вкладок в симуляторе
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
-            event.target.classList.add('active');
-            document.getElementById('tab-' + tabId).classList.add('active');
-            
-            logAction('sys', `🔄 Интерфейс: Переключение на вкладку [${tabId.toUpperCase()}]`);
-        }
-
-        // Обновление значения гуманизатора
-        function updateHum(val) {
-            document.getElementById('hum-val').innerText = val + '%';
-        }
-
-        // Система логов
+        // Имитация работы лога для наглядности (как в самой программе)
         const logOutput = document.getElementById('log-output');
-        const maxLogs = 12;
+        const maxLogs = 18;
 
         function logAction(type, text) {
             const el = document.createElement('div');
             el.className = `log-entry log-${type}`;
             
-            // Получаем текущее время
             const now = new Date();
             const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}.${String(now.getMilliseconds()).padStart(3, '0')}`;
             
             el.innerHTML = `<span style="color:#666;">[${timeStr}]</span> ${text}`;
             logOutput.appendChild(el);
             
-            // Автоскролл и удаление старых логов
             if (logOutput.children.length > maxLogs) {
                 logOutput.removeChild(logOutput.firstChild);
             }
             logOutput.scrollTop = logOutput.scrollHeight;
         }
 
-        // Тестовый макрос (Имитация работы программы)
-        function simulateMacro() {
-            logAction('sys', '⚡ КНПП - Инициализация макроса VIP');
-            
-            setTimeout(() => logAction('act', '📍 [Avalon Node] - Подмена координат SendInput'), 400);
-            setTimeout(() => logAction('act', '🏃 ДВИЖЕНИЕ - D-S-D паттерн (Анти-кик)'), 1200);
-            setTimeout(() => logAction('sys', '⚙️ HWID Верификация: Успешно (0x4A...)'), 2000);
-            setTimeout(() => logAction('act', '🎯 Смещение прицела X: -2px, Y: +4px (Jitter 10%)'), 2800);
-        }
-
-        // Приветственные логи при загрузке
+        // Приветственные логи и симуляция действий
         window.onload = () => {
-            logAction('sys', 'Инициализация ядра Autopilot v2.1...');
-            setTimeout(() => logAction('sys', 'Подключение к драйверу ViGEmBus... OK'), 500);
-            setTimeout(() => logAction('act', 'Ожидание ввода пользователя...'), 1000);
+            logAction('sys', 'Инициализация ядра Autopilot v2.1 [ZOMBIE CORE]...');
+            setTimeout(() => logAction('sys', 'Подключение к драйверу ViGEmBus / SendInput... OK'), 500);
+            setTimeout(() => logAction('sys', '⚙️ HWID Верификация: Успешно (0x4A...)'), 1200);
+            setTimeout(() => logAction('act', 'Ожидание ввода пользователя...'), 1800);
+            
+            // Периодическая симуляция активности для лога
+            setInterval(() => {
+                const actions = [
+                    { t: 'act', m: '🏃 ДВИЖЕНИЕ - D-S-D паттерн (Анти-кик активен)' },
+                    { t: 'act', m: '🎯 Смещение прицела X: -2px, Y: +4px (Jitter 10%)' },
+                    { t: 'act', m: '⚙️ Авто-броня: Интервал достигнут. Экипировка.' },
+                    { t: 'sys', m: '🔄 Интерфейс: Переключение макроса (VIP Sequence)' },
+                    { t: 'act', m: '🔥 Очередь ЛКМ: Подавление отдачи активно' }
+                ];
+                const randomAction = actions[Math.floor(Math.random() * actions.length)];
+                logAction(randomAction.t, randomAction.m);
+            }, 3500);
         };
     </script>
 </body>
