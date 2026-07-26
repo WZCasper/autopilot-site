@@ -262,58 +262,13 @@
             top: 100px;
         }
 
-        .log-window {
-            background: rgba(10, 10, 10, 0.95);
-            border: 1px solid var(--purple);
-            border-radius: 8px;
-            height: 600px;
-            font-family: 'JetBrains Mono', monospace;
-            padding: 15px;
-            overflow-y: hidden;
-            box-shadow: inset 0 0 30px rgba(142,68,173,0.1);
-        }
-
-        .log-header { 
-            font-size: 12px; 
-            color: var(--purple); 
-            border-bottom: 1px solid #333; 
-            padding-bottom: 10px; 
-            margin-bottom: 10px; 
-            font-weight: bold; 
-            display: flex; 
-            justify-content: space-between; 
-        }
-
-        .log-content { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 6px; 
-            height: calc(100% - 30px); 
-        }
-
-        .log-entry { 
-            font-size: 11px; 
-            opacity: 0; 
-            transform: translateX(-10px); 
-            animation: slideInLog 0.3s forwards; 
-            padding: 6px 10px; 
-            border-radius: 4px; 
-            border-left: 2px solid transparent; 
-        }
-        
-        .log-sys { color: var(--gold); background: rgba(241,196,15,0.05); border-left-color: var(--gold); }
-        .log-act { color: var(--green); background: rgba(46,204,113,0.05); border-left-color: var(--green); }
-        .log-err { color: var(--red); background: rgba(231,76,60,0.05); border-left-color: var(--red); }
-
         footer { text-align: center; padding: 40px; background: #050505; border-top: 1px solid #111; font-size: 12px; color: #666; }
         
         @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.3); } 100% { opacity: 1; transform: scale(1); } }
-        @keyframes slideInLog { to { opacity: 1; transform: translateX(0); } }
 
         @media (max-width: 1024px) {
             .app-container { flex-direction: column; }
             .log-column { width: 100%; position: static; }
-            .log-window { height: 400px; }
         }
     </style>
 </head>
@@ -410,28 +365,20 @@
             <!-- Колонка со скринами -->
             <div class="screenshots-column">
                 <!-- Главный скриншот программы -->
-                <img src="image_648653.png" alt="Autopilot Interface Main" class="main-screenshot" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'800\' height=\'500\'><rect width=\'100%\' height=\'100%\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' fill=\'%23444\' font-family=\'sans-serif\' font-size=\'20\' text-anchor=\'middle\'>image_648653.png</text></svg>'">
+                <img src="image_641dd4.png" alt="Autopilot Interface Main" class="main-screenshot">
                 
                 <!-- Галерея дополнительных скринов -->
                 <div class="screenshot-gallery">
-                    <img src="image_643387.png" alt="Screenshot 1" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'150\'><rect width=\'100%\' height=\'100%\' fill=\'%231a1a1a\'/><text x=\'50%\' y=\'50%\' fill=\'%23444\' font-family=\'sans-serif\' font-size=\'12\' text-anchor=\'middle\'>image_643387.png</text></svg>'">
-                    <img src="image_643078.png" alt="Screenshot 2" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'150\'><rect width=\'100%\' height=\'100%\' fill=\'%231a1a1a\'/><text x=\'50%\' y=\'50%\' fill=\'%23444\' font-family=\'sans-serif\' font-size=\'12\' text-anchor=\'middle\'>image_643078.png</text></svg>'">
-                    <img src="image_642ffb.png" alt="Screenshot 3" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'150\'><rect width=\'100%\' height=\'100%\' fill=\'%231a1a1a\'/><text x=\'50%\' y=\'50%\' fill=\'%23444\' font-family=\'sans-serif\' font-size=\'12\' text-anchor=\'middle\'>image_642ffb.png</text></svg>'">
-                    <img src="image_642cbd.png" alt="Screenshot 4" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'150\'><rect width=\'100%\' height=\'100%\' fill=\'%231a1a1a\'/><text x=\'50%\' y=\'50%\' fill=\'%23444\' font-family=\'sans-serif\' font-size=\'12\' text-anchor=\'middle\'>image_642cbd.png</text></svg>'">
+                    <img src="image_643387.png" alt="Screenshot 1">
+                    <img src="image_643078.png" alt="Screenshot 2">
+                    <img src="image_642ffb.png" alt="Screenshot 3">
+                    <img src="image_642cbd.png" alt="Screenshot 4">
                 </div>
             </div>
 
-            <!-- Колонка с логом -->
+            <!-- Колонка с логом (статичная картинка) -->
             <div class="log-column">
-                <div class="log-window">
-                    <div class="log-header">
-                        <span>ЛОГ ДЕЙСТВИЙ В РЕАЛЬНОМ ВРЕМЕНИ</span>
-                        <span style="color: var(--green);">● СЕТЬ АКТИВНА</span>
-                    </div>
-                    <div class="log-content" id="log-output">
-                        <!-- Логи генерируются через JS -->
-                    </div>
-                </div>
+                <img src="ЛОГ ДЕЙСТВИЙ.png" alt="Лог действий" class="main-screenshot">
             </div>
             
         </div>
@@ -445,47 +392,5 @@
         </p>
     </footer>
 
-    <script>
-        // Имитация работы лога для наглядности (как в самой программе)
-        const logOutput = document.getElementById('log-output');
-        const maxLogs = 18;
-
-        function logAction(type, text) {
-            const el = document.createElement('div');
-            el.className = `log-entry log-${type}`;
-            
-            const now = new Date();
-            const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}.${String(now.getMilliseconds()).padStart(3, '0')}`;
-            
-            el.innerHTML = `<span style="color:#666;">[${timeStr}]</span> ${text}`;
-            logOutput.appendChild(el);
-            
-            if (logOutput.children.length > maxLogs) {
-                logOutput.removeChild(logOutput.firstChild);
-            }
-            logOutput.scrollTop = logOutput.scrollHeight;
-        }
-
-        // Приветственные логи и симуляция действий
-        window.onload = () => {
-            logAction('sys', 'Инициализация ядра Autopilot v2.1 [ZOMBIE CORE]...');
-            setTimeout(() => logAction('sys', 'Подключение к драйверу ViGEmBus / SendInput... OK'), 500);
-            setTimeout(() => logAction('sys', '⚙️ HWID Верификация: Успешно (0x4A...)'), 1200);
-            setTimeout(() => logAction('act', 'Ожидание ввода пользователя...'), 1800);
-            
-            // Периодическая симуляция активности для лога
-            setInterval(() => {
-                const actions = [
-                    { t: 'act', m: '🏃 ДВИЖЕНИЕ - D-S-D паттерн (Анти-кик активен)' },
-                    { t: 'act', m: '🎯 Смещение прицела X: -2px, Y: +4px (Jitter 10%)' },
-                    { t: 'act', m: '⚙️ Авто-броня: Интервал достигнут. Экипировка.' },
-                    { t: 'sys', m: '🔄 Интерфейс: Переключение макроса (VIP Sequence)' },
-                    { t: 'act', m: '🔥 Очередь ЛКМ: Подавление отдачи активно' }
-                ];
-                const randomAction = actions[Math.floor(Math.random() * actions.length)];
-                logAction(randomAction.t, randomAction.m);
-            }, 3500);
-        };
-    </script>
 </body>
 </html>
