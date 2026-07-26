@@ -366,7 +366,7 @@
     </div>
 
     <div class="btn-group">
-        <a href="https://github.com/WZCasper/autopilot-site/releases/download/v.1.1/Autopilot.v2.1.exe" class="btn btn-green sound-btn">
+        <a href="https://github.com/WZCasper/autopilot-site/releases/download/v.1.1/Autopilot.v1.1.exe" class="btn btn-green sound-btn">
             <span>⬇️</span> СКАЧАТЬ
         </a>
         <a href="https://www.youtube.com/watch?v=R_MGIDQ9s80" target="_blank" class="btn btn-red sound-btn">Инструкция</a>
@@ -556,17 +556,34 @@
     closeAdmin.addEventListener('click', () => {
         adminModal.style.display = 'none';
     });
+    
+    // Соль и параметры из исходного кода Python для идеальной синхронизации
+    const SPECIFIC_SALT = "412163608";
 
-    // Генерация случайного формата ключа (ANC-XXXX-XXXX-XXXX)
-    function generateRandomKey() {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        let key = 'ANC';
-        for(let j=0; j<3; j++) {
-            key += '-';
-            for(let i=0; i<4; i++) key += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return key;
+    async function generateKey(hwid, days, index = 0) {
+        // Форматируем дни до 3-х символов для вставки в токен (например, 30 -> "030")
+        const daysStr = days.toString().padStart(3, '0');
+        
+        // Собираем "сырую" строку для хэширования точно как в Python коде:
+        // f"{hwid}{SPECIFIC_SALT}{index}{days}"
+        const rawPayload = `${hwid}${SPECIFIC_SALT}${index}${days}`;
+        
+        // Вычисляем SHA-256
+        const encoder = new TextEncoder();
+        const data = encoder.encode(rawPayload);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        
+        // Конвертируем ArrayBuffer в hex строку в верхнем регистре
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+        
+        // Формируем токен (Первые 3 символа хэша + 3 символа дней + 4 символа хэша с позиции 3)
+        // Итог: Длина ровно 10 символов
+        const token = hashHex.substring(0, 3) + daysStr + hashHex.substring(3, 7);
+        
+        return token;
     }
+
 
     // Форматирование даты выдачи
     function formatDate(date) {
@@ -574,7 +591,7 @@
     }
 
     // Создание нового ключа
-    generateBtn.addEventListener('click', () => {
+    generateBtn.addEventListener('click', async () => {
         const hwid = document.getElementById('hwid-input').value.trim();
         const name = document.getElementById('name-input').value.trim();
         const durationDays = parseInt(document.getElementById('duration-input').value);
@@ -583,26 +600,35 @@
             alert("Пожалуйста, заполните HWID и Имя пользователя.");
             return;
         }
+        
+        try {
+            const key = await generateKey(hwid, durationDays, 0);
+            
+            const now = new Date();
 
-        const now = new Date();
+            const newKey = {
+                key: key,
+                hwid: hwid,
+                name: name,
+                created: formatDate(now),
+                duration: durationDays,
+                timestamp: now.getTime()
+            };
+    
+            // Сохранение в Local Storage браузера
+            let keys = JSON.parse(localStorage.getItem('autopilot_keys') || '[]');
+            keys.unshift(newKey);
+            localStorage.setItem('autopilot_keys', JSON.stringify(keys));
+    
+            document.getElementById('hwid-input').value = '';
+            document.getElementById('name-input').value = '';
+            renderKeys();
+            
+        } catch (error) {
+             console.error("Ошибка при генерации ключа:", error);
+             alert("ОШИБКА ГЕНЕРАЦИИ");
+        }
 
-        const newKey = {
-            key: generateRandomKey(),
-            hwid: hwid,
-            name: name,
-            created: formatDate(now),
-            duration: durationDays,
-            timestamp: now.getTime()
-        };
-
-        // Сохранение в Local Storage браузера
-        let keys = JSON.parse(localStorage.getItem('autopilot_keys') || '[]');
-        keys.unshift(newKey);
-        localStorage.setItem('autopilot_keys', JSON.stringify(keys));
-
-        document.getElementById('hwid-input').value = '';
-        document.getElementById('name-input').value = '';
-        renderKeys();
     });
 
     // Отрисовка таблицы
